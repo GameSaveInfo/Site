@@ -1,0 +1,17 @@
+table.home_page_feature {
+    border-collapse:separate;
+    border-spacing:10px 10px;
+}
+table.home_page_feature td {
+    color:#eeeeec;;
+    width:30%;
+    background-color:rgba(0,0,0,0.2);
+    padding:10px;
+    padding-top:0;
+    text-align:center;
+    vertical-align:top;
+}
+table.home_page_feature ul{
+    text-align:left;
+    margin-left:40px;
+}

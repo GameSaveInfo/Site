@@ -1,0 +1,125 @@
+<?php
+require_once 'AXmlExporter.php';
+class GameSaveInfo20 extends AXmlExporter {
+
+    public function __construct($comment = null) {
+        parent::__construct("games.xsd",$comment);
+    }
+    protected function createRootElement() {
+        $root = $this->createElement("programs");
+        $this->setAttribute($root,"majorVersion","2");
+        $this->setAttribute($root,"minorVersion","0");
+        return $root;
+    }
+
+    protected function createGameElement($game) {
+        $gele = $this->createElement($game->type);
+        
+        $this->processFields($game,$gele, array("type","title","comment"));
+
+        $gele->appendChild($this->createElement("title",$game->title));
+        
+        
+        foreach($game->versions as $version) {
+            $gele->appendChild($this->createGameVersionElement($version));
+        }
+        
+        if($game->comment!=null) {
+            $gele->appendChild($this->createElement("comment",$game->comment));            
+        }
+
+        return $gele;
+    }
+    protected function createGameVersionElement($version) {
+        $vele = $this->createElement("version");
+        
+        $this->processFields($version,$vele, array("name", "virtualstore", "detect","title","comment","restore_comment"));
+        
+        if($version->virtualstore=="ignore")
+            $this->setAttribute($vele,"virtualstore","ignore");
+
+        if($version->detect=="required")
+            $this->setAttribute($vele,"detect","required");
+
+        if($version->title!=null) {
+            $vele->appendChild($this->createElement("title",$version->title));            
+        }
+    
+        foreach($version->scumm_vm as $scumm_vm) {
+            $sele = $this->createElement("scummvm");
+            $this->processFields($scumm_vm,$sele,array("game_version"));
+            $vele->appendChild($sele);
+        }
+        
+        foreach($version->ps_codes as $ps_code) {
+            $pele = $this->createElement("ps_code");
+            $this->processFields($ps_code,$pele,array("game_version"));
+            $vele->appendChild($pele);
+        }
+        
+        
+        $lele = $this->createLocationsElement($version->locations);
+        
+        if($lele!=null)
+            $vele->appendChild($lele);
+
+        foreach($version->file_types as $file_type) {
+            $fele = $this->createElement("files");
+            $this->processFields($file_type,$fele,array("game_version"));
+            foreach($file_type->files as $file) {
+                $sele = $this->createElement("save");
+                $this->processFields($file,$sele,array("type"));
+                foreach($file->excepts as $except) {
+                    $eele = $this->createElement("except");
+                    $this->processFields($except,$eele,array("type","parent"));
+                    $sele->appendChild($eele);
+                }
+                $fele->appendChild($sele);
+            }
+            $vele->appendChild($fele);
+        }
+        
+        foreach($version->identifiers as $identifier) {
+            $iele = $this->createElement("identifier");
+            $this->processFields($identifier,$iele,array("game_version"));
+            $vele->appendChild($iele);
+        }
+
+
+        if($version->comment!=null) {
+            $vele->appendChild($this->createElement("comment",$version->comment));            
+        }
+        if($version->restore_comment!=null) {
+            $vele->appendChild($this->createElement("restore_comment",$version->restore_comment));            
+        }
+
+        // Contributors
+        foreach ($version->contributors as $contributor) {
+            $vele->appendChild($this->createElement("contributor", $contributor));
+        }
+
+        return $vele;
+    }
+    
+    
+    
+    static $loc_types = array("PathLocation"=>"path","RegistryLocation"=>"registry",
+                        "ShortcutLocation"=>"shortcut","GameLocation"=>"parent");
+    protected function createLocationsElement($locations) {
+        if(sizeof($locations)>0) {
+            $lele = $this->createElement("locations");
+            foreach($locations as $location) {
+                $new_lele = $this->createElement(self::$loc_types[get_class($location)]);
+                
+                $this->processFields($location,$new_lele,array("game_version"));
+                
+                $lele->appendChild($new_lele);
+            }
+            return $lele;
+        }
+    }
+
+
+}
+
+?>

@@ -1,0 +1,15 @@
+table.compatibility {
+    width:100%;
+    text-align: center; 
+    font-size: smaller; 
+    table-layout: auto; 
+}
+tr.compatibility td{
+    color:black;
+} 
+tr.compatibility_header {
+    height:10px;
+}
+div#game_data {
+    margin-top:50px;
+}
