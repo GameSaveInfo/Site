@@ -68,7 +68,7 @@ class ExportController {
         $cache = $this->link->Select("xml_cache",null,$cache_criteria,null);        
         if(!$nocache&&sizeof($cache)==1) {
             $last_date = $this->link->Select("update_history",null,null,"timestamp DESC");
-        	$last_date = $last_date[0];
+            $last_date = $last_date[0];
 	        $last_date = $last_date->timestamp;
         	$tmp_cache = $cache[0];
         	if($last_date>$tmp_cache->timestamp) {
@@ -79,6 +79,7 @@ class ExportController {
         
         if(!$nocache&&sizeof($cache)==1) {
             $cache = $cache[0];           
+            $this->link->Update("xml_cache",$cache_criteria,array("downloaded"=>$cache->downloaded+1));
              echo $cache->contents;
         } else {
             $result = $this->link->Select('xml_exporters',null,array("name"=>$exporter),array("name"=>'asc'));
