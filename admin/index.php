@@ -1,7 +1,9 @@
 <?php
 
     include_once '../headers.php';
-    include_once '../../Database.php';
+    if(!class_exists("Database")) {
+        include_once '../libs/Database.php';
+   }
    
 
     if(isset($_POST['erase_game_safety'])) {
