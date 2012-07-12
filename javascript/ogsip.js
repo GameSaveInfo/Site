@@ -40,7 +40,7 @@ function hashchange() {
 	} else if(window.location.hash == "#numeric") {
 		letter = "numeric";
 	} else {
-		letter = window.location.hash.substring(1,2);
+		letter = window.location.hash.substring(1,2).toUpperCase();
         if(isNumber(letter)) {
             letter = "numeric";
         }

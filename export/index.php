@@ -1,7 +1,7 @@
 <?php
 include_once "../headers.php";
 
-include_once "../../shared/exporters/ExportController.php";
+include_once "../exporters/ExportController.php";
 
 $export = new ExportController($db);
 

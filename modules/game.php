@@ -84,15 +84,27 @@ function exportFiles($files) {
             } else {
                 echo 'All the files in the "'.$file->path.'" subfolder';   
             }
-        } else if($file->path==null) {
-            echo 'All the files in the location that match "'.$file->filename;
         } else {
-            echo 'The files in the "'.$file->path.'" subfolder that match "'.$file->filename.'"';   
+            if(strstr($file->filename,"*")||strstr($file->filename,"?")) {
+                if($file->path==null) {
+                    echo 'All the files that match "'.$file->filename;
+                } else {
+                    echo 'The files in the "'.$file->path.'" subfolder that match "'.$file->filename.'"';   
+                }
+            } else {
+                if($file->path==null) {
+                    echo 'The file named "'.$file->filename;
+                } else {
+                    echo 'The file named "'.$file->filename.'" in the "'.$file->path.'" subfolder';   
+                }
+            }
         }
         echo '</li>';
     }
     echo '</ul>';
-    
+}
+
+function printFile($file) {
     
 }
 
@@ -106,7 +118,7 @@ foreach($data as $row) {
 
 $name = $_GET["name"];
          
-require_once '../../shared/gamedata/Game.php';
+require_once '../gamedata/Game.php';
 $row;
 $data = $db->Select("games",null,array("name"=>$name),array("name"=>"ASC"));
 if(sizeof($data)==0) {

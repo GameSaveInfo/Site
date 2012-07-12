@@ -1,7 +1,7 @@
 <?php
 
     include_once '../headers.php';
-    include_once '../../shared/Database.php';
+    include_once '../../Database.php';
    
 
     if(isset($_POST['erase_game_safety'])) {
@@ -115,7 +115,7 @@ Erase game
         $url = $base_url.$file;
         
         echo '<div style="width:50%;float:left;">File Load:<br />';
-        require_once('../../shared/gamedata/Games.php');
+        require_once('../gamedata/Games.php');
         Games::loadFromXml($url,$schema_url);
         echo '</div>';
         echo '<div style="width:50%;float:left;">';

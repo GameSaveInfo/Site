@@ -2,7 +2,7 @@
 	$site_name = "GameSave.Info";
     $title = $site_name;;
     include_once 'headers.php';
-    include_once "../shared/gamedata/Games.php";
+    include_once "gamedata/Games.php";
 ?>
 
 <!DOCTYPE HTML>
@@ -85,6 +85,7 @@ The <?php echo $title ?> is mantained by Matthew Barbour and various <a href="">
 
 <div id="menu">
 <a href="xml_format.php">XML Format</a>
+<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a>
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a>
 <a href="https://github.com/GameSaveInfo/Reports">Reports</a>
 </div>

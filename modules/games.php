@@ -1,6 +1,6 @@
 <?php
 include_once '../headers.php';
-include_once '../../shared/gamedata/Games.php';
+include_once '../gamedata/Games.php';
 $letter = $_GET['letter'];
 
 $games = Games::getGamesForLetter($letter,$db);
