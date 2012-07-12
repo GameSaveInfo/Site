@@ -55,17 +55,31 @@ class ExportController {
         echo "NO FILE SPECIFIED, DISPLAYING ALL FILES FOR EXPORTER ".$exporter;
                 $this->printFilesForExporter($exporter);
     }
+    protected function performExport($exporter,$file) {
     
+    }
     
     
     protected function exportFile($exporter, $file) {
-        $nocache = true;
+        $nocache = false;
         header("Content-Type:text/xml; charset=UTF-8'");
         $file = $_GET['file'];
-        $cache = $this->link->Select("xml_cache",null,array("exporter"=>$exporter,"file"=>$file),null);
+        $cache_criteria = array("exporter"=>$exporter,"file"=>$file);
+        $cache = $this->link->Select("xml_cache",null,$cache_criteria,null);        
         if(!$nocache&&sizeof($cache)==1) {
-            $cache = $cache[0];
-            echo $cache->contents;
+            $last_date = $this->link->Select("update_history",null,null,"timestamp DESC");
+        	$last_date = $last_date[0];
+	        $last_date = $last_date->timestamp;
+        	$tmp_cache = $cache[0];
+        	if($last_date>$tmp_cache->timestamp) {
+        		$this->link->Delete("xml_cache",$cache_criteria);
+		        $cache = $this->link->Select("xml_cache",null,$cache_criteria,null);        
+        	}
+        }
+        
+        if(!$nocache&&sizeof($cache)==1) {
+            $cache = $cache[0];           
+             echo $cache->contents;
         } else {
             $result = $this->link->Select('xml_exporters',null,array("name"=>$exporter),array("name"=>'asc'));
             $row = $result[0];    
@@ -75,17 +89,14 @@ class ExportController {
             Games::loadFromDb($file,$exporter,$this->link);
             $comment = $this->link->Select('xml_export_files',"comment",array("exporter"=>$exporter,"file"=>$file),null);
             $comment = $comment[0];
-            $exporter = new $row->name($comment->comment);
-            $output = $exporter->export();        
+            $exp= new $row->name($comment->comment);
+            $output = $exp->export();        
             
             if(!$nocache)
-                $db->Insert("xml_cache",array("exporter"=>$exporter,"file"=>$file,"contents"=>$output));
+                $this->link->Insert("xml_cache",array("exporter"=>$exporter,"file"=>$file,"contents"=>$output));
                 
             echo $output;
         }
-
-
-
     }
 
 
