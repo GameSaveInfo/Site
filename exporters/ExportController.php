@@ -93,7 +93,7 @@ class ExportController {
             $exp= new $row->name($comment->comment);
             $output = $exp->export();        
             
-            if(!$nocache)
+            if(!$nocache&&!$exp->error_occured)
                 $this->link->Insert("xml_cache",array("exporter"=>$exporter,"file"=>$file,"contents"=>$output));
                 
             echo $output;

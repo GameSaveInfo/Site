@@ -63,6 +63,7 @@ abstract class AXmlExporter extends AExporter {
             
             if (!$document->schemaValidate($schema)) {
                 echo $text;
+                $this->error_occured = true;
                 throw new Exception("XML DID NOT PASS VALIDATION: " . $schema);
             }
         }
