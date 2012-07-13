@@ -34,7 +34,15 @@
             echo "<tr><th colspan='2'>".$header."</th></tr>";   
         }
         foreach($items as $item) {
-            echo "<tr><td>".$item->name."</td><td>".$item->description."</td></tr>";
+            echo "<tr><td>".$item->name."</td><td>";
+            if($table=="game_environment_variables") {
+                include_once 'gamedata/Location.php';
+                include_once 'gamedata/GameVersion.php';
+                echo Location::getEvDescription($item->name,$db);
+            } else {
+                echo $item->description;
+            }
+            echo "</td></tr>";
         }
         echo "</table>";
     }
