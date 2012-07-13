@@ -1,13 +1,18 @@
 body {
 	background-color:#eeeeec;
-	font-size:8pt;
+	font-size:7pt;
 	font-family: sans-serif;
 }
 div.search {
-	position:absolute;
-	left:100px;
-	top:100px;
+    position:absolute;
+	right:25%;
+	top:40px;
     font-size:12pt;
+}
+div.search input {
+    position:relative;
+    top:-2px;
+    margin-left:5px;
 }
 .ui-autocomplete {
 	max-height: 50%;
@@ -17,21 +22,9 @@ div.search {
 	/* add padding to account for vertical scrollbar */
 	padding-right: 20px;
 }
-.has_tooltip {
-	position:relative;
-	display:inline;
-}
-.has_tooltip .tooltip {
-	position:absolute;
-	display:none;
-	left:10%;
-	top:90%;
-	background-color:rgba(0,0,0,07);
-	color:#eeeeec;
-	padding:3px;
-	border:solid 1px black;
-	z-index:9999999999;
-    padding:3px;
+
+.ev_name {
+    color:red;    
 }
 .tooltip {
     white-space:nowrap;    
@@ -117,4 +110,8 @@ display:none !important;
     padding-top:10px;
     width:100%;
     clear:both;
+}
+
+dl.ev_example dt {
+    margin:5px;    
 }

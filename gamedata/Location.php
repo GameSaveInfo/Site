@@ -52,7 +52,31 @@ abstract class Location extends AXmlData {
         self::writeDataToDb($this,$this->table,$this->getSubFields(),null,$con, 'Writing '.get_class($this).' to database');
     }
     
-
+    
+    private static $ev = null;
+    public static function getEvDescription($name,$db) {
+        if(is_null(self::$ev)) {
+            self::$ev = array();
+            $data = $db->Select("game_environment_variables",null,null,null);
+            foreach($data as $row) {
+                $desc =  $row->description."<br />\n";
+                $paths = $db->Select("ev_paths",null,array("ev"=>$row->name),null);
+                if(sizeof($paths)>0) {
+                    $desc .= "Here are some common examples:<br/>";
+                    $desc .= "<dl class=\"ev_example\">\n";
+                    foreach($paths as $path) {
+                        $desc .= "<dt>".GameVersion::getOsDescription($path->os,$db)."</dt>";
+                        $desc .= "<dd>";
+                        $desc .= $path->paths;
+                        $desc .= "</dd>\n";
+                    }                 
+                    $desc .= "</dl>\n";
+                }
+                self::$ev[$row->name] = $desc;
+            }
+        }
+        return self::$ev[$name];
+    }
 }
 
 ?>

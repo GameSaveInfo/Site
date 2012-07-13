@@ -73,15 +73,6 @@ function loadLetter(letter, game_name) {
 		loadGame(game_name);
 	});
 }
-function setUpToolTips() {
-    $('.has_tooltip').mouseover(function() {
-        jQuery(this).children("div").fadeIn();
-    });
-    $('.has_tooltip').mouseout(function() {
-        jQuery(this).children("div").fadeOut();
-    });
-
-}
 var last_game;
 function loadGame(game) {
 	if(last_game != game ) {

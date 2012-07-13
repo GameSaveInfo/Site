@@ -57,6 +57,19 @@ class GameVersion extends AXmlData {
     protected function getId() {
         return $this->generateHash();
     }
+    
+    private static $os_names = null;
+    public static function getOsDescription($name,$db) {
+        if(is_null(self::$os_names)) {
+            $result = $db->Select("version_operating_systems",null,null,null);
+            self::$os_names = array();
+            foreach($result as $os) {
+                self::$os_names[$os->name] = $os->description;
+            }
+        }
+        return self::$os_names[$name];
+    }
+    
     public function getFields() {
         return array("name"=>   array("string","name",true),
                     "os"=>      array("string","os",true),

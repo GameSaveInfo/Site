@@ -9,11 +9,14 @@
 <html>
 <head>
 <title><?php echo $title; ?></title>
+<link media="Screen" href="libs/tooltip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="css/ogsip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="libs/jquery/css/redmond/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="libs/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="libs/jquery/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="libs/jquery/jquery-tipsy.js"></script>
 <script type="text/javascript" src="libs/yoxview/yoxview-init.js"></script>
+<script type="text/javascript" src="libs/tooltip.js"></script>
 <script type="text/javascript" src="javascript/ogsip.js"></script>
 <script type="text/javascript">
 var availableGames = [

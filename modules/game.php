@@ -69,9 +69,8 @@ function printFiles($files) {
     }
 }
 
-function printEv($name) {
-    global $ev;
-    echo '<div class="has_tooltip">%' . strtoupper($name) . '%<div class="tooltip">'.$ev[$name].'</div></div>';
+function printEv($name,$db) {
+    echo '<div class="has_tooltip ev_name">' . $name . '<div class="tooltip">'.Location::getEvDescription($name,$db).'</div></div>';
 }
 
 function exportFiles($files) {
@@ -109,12 +108,6 @@ function printFile($file) {
 }
 
 
-global $ev;
-$ev = array();
-$data = $db->Select("game_environment_variables",null,null,null);
-foreach($data as $row) {
-	$ev[$row->name] = $row->description;
-}
 
 $name = $_GET["name"];
          
@@ -252,7 +245,7 @@ if (sizeof($version->locations) > 0) {
 echo '<ul>';
         foreach ($version->path_locations as $location) {
             echo '<li>';
-             printEv($location->ev); 
+             printEv($location->ev,$db); 
             echo '\\' . $location->path;
             printCommonPathAttributes($location);
             echo '</li>';
@@ -278,7 +271,7 @@ foreach ($version->registry_locations as $location) {
         echo '<ul>';
 foreach ($version->shortcut_locations as $location) {
             echo '<li>';
-printEv($location->ev);
+printEv($location->ev,$db);
 echo '\\' . $location->path;
             printCommonPathAttributes($location);
             echo '</li>';
