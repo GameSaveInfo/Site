@@ -66,9 +66,11 @@ abstract class Location extends AXmlData {
                     $desc .= "<dl class=\"ev_example\">\n";
                     foreach($paths as $path) {
                         $desc .= "<dt>".GameVersion::getOsDescription($path->os,$db)."</dt>";
-                        $desc .= "<dd>";
-                        $desc .= $path->paths;
-                        $desc .= "</dd>\n";
+                        foreach(explode("\n", $path->paths) as $example) {
+                            $desc .= "<dd>";
+                            $desc .= $example;
+                            $desc .= "</dd>\n";
+                        }
                     }                 
                     $desc .= "</dl>\n";
                 }
