@@ -10,13 +10,14 @@
 <head>
 <title><?php echo $title; ?></title>
 <link media="Screen" href="libs/tooltip.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="libs/popups.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="css/ogsip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="libs/jquery/css/redmond/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="libs/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="libs/jquery/jquery-ui-1.8.21.custom.min.js"></script>
-<script type="text/javascript" src="libs/jquery/jquery-tipsy.js"></script>
 <script type="text/javascript" src="libs/yoxview/yoxview-init.js"></script>
 <script type="text/javascript" src="libs/tooltip.js"></script>
+<script type="text/javascript" src="libs/popups.js"></script>
 <script type="text/javascript" src="javascript/ogsip.js"></script>
 <script type="text/javascript">
 var availableGames = [
@@ -87,11 +88,28 @@ The <?php echo $title ?> is mantained by Matthew Barbour and various <a href="">
 </div>
 
 <div id="menu">
+<a href="adding_games" class="popup_link">Help Add Games</a>
 <a href="xml_format.php">XML Format</a>
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a>
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a>
-<a href="https://github.com/GameSaveInfo/Reports">Reports</a>
+<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a>
 </div>
+
+<div id="adding_games" class="popup">
+<h1>How do I help add games?</h1>
+<ul>
+<li><h2>The Easy Way</h2>
+Just e-mail me the game info at <a href="mailto:submissions@gamesave.info">submissions@gamesave.info</a>. I'll take care of the rest.
+</li>
+<li><h2>The Kinf-Of-Easy Way</h2>
+Use <a href="http://masgau.org/">MASGAU</a>'s Save Game Analyzer. It's rigged up to send the game reports straight to me, and it'll make sure that all the game info is collected!
+</li>
+<li><h2>The Hard Way</h2>
+Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repository</a>! Just fork it and commit your heart out! (If you don't understand this, you probably don't want to use this method. E-mail me if you'd like to learn about it!)
+</li>
+</ul>
+</div>
+
 
 </body>
 </html>

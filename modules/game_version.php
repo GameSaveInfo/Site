@@ -4,60 +4,90 @@
 include_once '../../DBSettings.php';
 include_once '../headers.php';
 
+function printCommonPathAttributes($location) {
+    if (get_class($location) != "PathLocation") {
+        if ($location->append != null)
+            echo '<td>' . $location->append . '</td>';
+        else
+            echo '<td></td>';
+
+        if ($location->detract != null)
+            echo '<td>' . $location->detract . '</td>';
+        else
+            echo '<td></td>';
+    }
+    if ($location->platform_version != null)
+        echo '<td>Only works with ' . $location->platform_version . '</td>';
+
+    if ($location->deprecated)
+        echo '<td style="background-color:red">Deprecated</td>';
+}
+
+function printFiles($files) {    
+    foreach ($files as $file) {
+            echo '<tr>';
+            if ($file->mode == 'IDENTIFIER') {
+                echo '<td>' . $file->path . '</td>';
+                echo '<td>' . $file->name . '</td>';
+            } else {
+
+                echo '<td>' . $file->path . '</td>';
+                echo '<td>';
+                if ($file->name == null)
+                    echo "* (Includes subfolders)";
+                else
+                    echo $file->name;
+                echo '</td>';
+                echo '<td>' . $file->type . '</td>';
+                echo '<td>' . $file->modified_after . '</td>';
+            }
+        echo '</tr>';
+    }
+}
+
+
 
 $name = $_GET["name"];
          
-            require_once '../shared/gamedata/Game.php';
-		 $game_data = new Game();
-            $game_data->loadFromDb($name, null);
+require_once '../shared/gamedata/Game.php';
+$game_data = new Game();
+$game_data->loadFromDb($name, null);
 if($game_data->name==null) {
-            $data = mysql_query("SELECT * FROM games"
-                                    ." WHERE name like '".$name."%'"
-                                    ." ORDER BY name ASC");
-		if($row = mysql_fetch_array($data)) {
-			$game_data->loadFromDb($row['name'], null);
-		} else {
-			throw new Exception($name." not found!");
-		}            
+    $data = mysql_query("SELECT * FROM games"
+                        ." WHERE name like '".$name."%'"
+                        ." ORDER BY name ASC");
+	if($row = mysql_fetch_array($data)) {
+		$game_data->loadFromDb($row['name'], null);
+	} else {
+		throw new Exception($name." not found!");
+	}            
 }
 
 
 
 
 
-                    echo '<h1>'.$game_data->title;
-			if($game_data->type!="Game")
-				echo " (".$game_data->type.")";
-			echo '</h1>';    
-		echo '<div class="game_versions">';            
+echo '<h1>'.$game_data->title;
+if($game_data->type!="Game")
+    echo " (".$game_data->type.")";
+echo '</h1>';    
+echo '<div class="game_versions">';            
             
-            echo '<ul>';
+echo '<ul>';
 
             $i = 0;
-            foreach ($game_data->versions as $version) {
-                echo '<li><a href="#tabs-'.$i.'">'.$version->getVersionTitle().'</a></li>';
-                $i++;
-            }
-            echo '</ul>';
-            $i = 0;
+//            foreach ($game_data->versions as $version) {
+  //              case($version->os) {
+    //                
+      //          }
+        //        echo '<li><a href="#tabs-'.$i.'">'.$version->getVersionTitle().'</a></li>';
+          //      $i++;
+        //    }
+echo '</ul>';
+$i = 0;
+
             foreach ($game_data->versions as $version) {
                 echo '<div class="game_data_tab" id="tabs-'.$i.'">';
-                $i++;
-                // Begin title code
-    
-                // End title code
-                
-                if ($version->deprecated) {
-                    echo '<h4>NOTE: This game version is no longer supported for backup. Archives previously made for this version can still be restored.</h4>';
-                }
-                if ($version->override_virtualstore) {
-                    echo '<h4>NOTE: This game version does not recognize VirtualStore folders.</h4>';
-                }
-                if ($version->require_detection) {
-                    echo '<h4>NOTE: Restoring this game version requires there to already be saves on the system.</h4>';
-                }
-
-                
                 
 
                 //PS codes
@@ -75,45 +105,6 @@ if($game_data->name==null) {
 
 
 
-function printCommonPathAttributes($location) {
-        if (get_class($location) != "PathLocation") {
-            if ($location->append != null)
-                echo '<td>' . $location->append . '</td>';
-            else
-                echo '<td></td>';
-
-            if ($location->detract != null)
-                echo '<td>' . $location->detract . '</td>';
-            else
-                echo '<td></td>';
-        }
-        if ($location->platform_version != null)
-            echo '<td>Only works with ' . $location->platform_version . '</td>';
-
-        if ($location->deprecated)
-            echo '<td style="background-color:red">Deprecated</td>';
-    }
-function printFiles($files) {    
-                foreach ($files as $file) {
-                        echo '<tr>';
-                        if ($file->mode == 'IDENTIFIER') {
-                            echo '<td>' . $file->path . '</td>';
-                            echo '<td>' . $file->name . '</td>';
-                        } else {
-        
-                            echo '<td>' . $file->path . '</td>';
-                            echo '<td>';
-                            if ($file->name == null)
-                                echo "* (Includes subfolders)";
-                            else
-                                echo $file->name;
-                            echo '</td>';
-                            echo '<td>' . $file->type . '</td>';
-                            echo '<td>' . $file->modified_after . '</td>';
-                        }
-                        echo '</tr>';
-                    }
-                }
 
                 if (sizeof($version->locations) > 0) {
                     echo '<h3>Locations</h3>';

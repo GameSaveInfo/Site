@@ -1,13 +1,12 @@
 body {
 	background-color:#eeeeec;
-	font-size:7pt;
 	font-family: sans-serif;
+    font-size:10pt;
 }
 div.search {
     position:absolute;
 	right:25%;
 	top:40px;
-    font-size:12pt;
 }
 div.search input {
     position:relative;
@@ -42,22 +41,26 @@ div.search input {
 	position:absolute;
 	text-align:center;
 	right:0;
-	left:150px;
-	top:100px;
+	left:0px;
+	top:120px;
 	height:30px;
+}
+div#letters label {
+    font-size:10pt;   
 }
 
 #games {
 	position:absolute;
 	left:3px;
 	bottom:3px;
-	top:130px;
+	top:160px;
 	right:80%;
 	overflow:auto;
 	margin:0 !important;
 	padding:0 !important;
 }
 #games label {
+    font-size:9pt;
     width:98%;
     padding:0 !important;
     margin:0 !important;
@@ -71,7 +74,7 @@ display:none !important;
 	position:absolute;
 	left:20%;
     margin-left:10px;
-	top:130px;
+	top:160px;
 	right:10px;
 	bottom:10px;
 	overflow:hidden;
@@ -81,7 +84,6 @@ display:none !important;
     text-align:center;
 }
 .game_version {
-    font-size:12pt;
     padding:10px;
     display:none;
     position:absolute;

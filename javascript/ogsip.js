@@ -1,8 +1,8 @@
-
-
 $(document).ready(function() {
 	if(window.location.hash == "#" || window.location.hash == "") {
-		letter = "A";
+		letter = "D";
+        game_name = "DeusEx";
+
 	} else if(window.location.hash == "#numeric") {
 		letter = "numeric";
 	} else {
@@ -25,6 +25,7 @@ $(document).ready(function() {
     	    changeLetter(ui.item.value);
         }
     });
+    
 });
 
 
@@ -34,9 +35,11 @@ function isNumber(n) {
 var last_letter;
 var game;
 function hashchange() {
+    document.getElementById("search").value = "";
 	var game_name = "";
 	if(window.location.hash == "#" || window.location.hash == "") {
-		letter = "A";
+		letter = "D";
+        game_name = "DeusEx";
 	} else if(window.location.hash == "#numeric") {
 		letter = "numeric";
 	} else {

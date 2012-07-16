@@ -126,7 +126,8 @@ $name = $row->name;
 $game_data = new Game();
 $game_data->loadFromDb($name, $row, $db);
 
-        echo '<h1>'.$game_data->title;
+echo '<h1>'.$game_data->title;
+
 if($game_data->type!="Game")
 	echo " (".ucfirst($game_data->type).")";
 echo '</h1>';    
@@ -134,128 +135,118 @@ echo '</h1>';
 if ($game_data->deprecated) {
     echo '<h4>NOTE: This game version has been marked as deprecated</h4>';
 }
-echo '<div class="game_versions">';            
+//echo '<div class="game_versions">';            
+
+//$i = 0;
+//foreach ($game_data->versions as $version) {
+//    echo '<input type="radio" id="radio'.$version->generateHash().'" name="version"';
+//    if($i == 0) {
+//        echo ' checked="checked"';
+//    }
+//    echo ' onclick="changeversion(\''.$version->generateHash().'\')" /><label for="radio'.$version->generateHash().'">'.$version->getVersionTitle().'</label>';
+//    $i++;
+//}
+//echo "</div>";
 
 $i = 0;
+
+$locations_found = false;
+
+$path_locations = array();
+$registry_locations = array();
+$shortcut_locations = array();
+$game_locations = array();
+$scumm_vm = array();
+$ps3_codes = array();
+$psp_codes = array();
+$contributors = array();
+$file_types = array();
 foreach ($game_data->versions as $version) {
-echo '<input type="radio" id="radio'.$version->generateHash().'" name="version"';
-if($i == 0) {
-echo ' checked="checked"';
-}
-echo ' onclick="changeversion(\''.$version->generateHash().'\')" /><label for="radio'.$version->generateHash().'">'.$version->getVersionTitle().'</label>';
-$i++;
-}
-echo "</div>";
+    foreach ($version->path_locations as $location) {
+        $locations_found = true;
+        array_push($path_locations,$location);
+    }
+    foreach ($version->registry_locations as $location) {
+        $locations_found = true;
+        array_push($registry_locations,$location);
+    }
+    foreach ($version->shortcut_locations as $location) {
+        $locations_found = true;
+        array_push($shortcut_locations,$location);
+    }
+    foreach ($version->game_locations as $location) {
+        $locations_found = true;
+        array_push($game_locations,$location);
+    }
+    foreach ($version->scumm_vm as $location) {
+        $locations_found = true;
+        array_push($scumm_vm,$location);
+    }
 
-$i = 0;
-foreach ($game_data->versions as $version) {
-if($i==0) {              
-    echo '<div class="game_version" style="display:block;" id="'.$version->generateHash().'">';
-                } else {
-    echo '<div class="game_version" id="'.$version->generateHash().'">';
-}
-$i++;
-// Begin title code
-
-// End title code
-
-if ($version->virtualstore=="ignore") {
-    echo '<h4>NOTE: This game version does not recognize VirtualStore folders.</h4>';
-}
-if ($version->detect=="required") {
-    echo '<h4>NOTE: Restoring this game version requires there to already be saves on the system.</h4>';
-}
-
-echo '<div class="locations">';
-
+    foreach($version->file_types as $file) {
+        if(!array_key_exists($file->name,$file_types)) {
+            $file_types[$file->name] = $file->files;   
+        }
+    }
 
 //PS codes
 if (sizeof($version->ps_codes) > 0) {
-
-$first_export = true;
-$first_psp = true;
-    foreach ($version->ps_codes as $path) {
-switch($version->os) {
-case "PS3":
-case "PS2":
-case "PS1":
-	if($first_export) {
-		echo '<details open="open"><summary>When exported to a USB drive from a PS3, the saves are in these locations:</summary>';
-		$first_export = false;
-        echo '<ul>';
-	}
-                echo '<li>';
-	if($version->os=="PS3")
-		echo "PS3\\SAVEDATA";
-	else
-		echo "PS3\\EXPORT\\PSV";
-	echo '\\BA' . $path->prefix . '?' . $path->suffix;
-
-	if($path->append!=null) {
-		echo $path->append;
-	}
-	echo '*';
-	if($version->os=="PS3")
-		echo '\\';
-	if($path->type!=null) {
-		echo " (Contains ".$path->type." Data)";
-	}
-
-	break;
-}
-
-    }
-if(!$first_export) 
-echo '</ul></details>';
     foreach ($version->ps_codes as $path) {
         switch($version->os) {
-                case "PS1":
-case "PSP":
-                        if($first_psp) {
-                                echo '<details open="open"><summary>When saved to a PSP memory stick, the saves are in these folders:</summary>';
-    				echo '<ul>';
-                        $first_psp = false;
-                        }
-                        echo '<li>';
-                        echo 'PSP\\SAVEDATA\\' . $path->prefix . $path->suffix;
-                        if($path->append!=null) {
-                                echo $path->append;
-                        }
-                        echo '*\\';
-                        if($path->type!=null) {
-                                echo " (Contains ".$path->type." Data)";
-                        }
-                        
-                        break;
+            case "PS3":
+            case "PS2":
+            case "PS1":
+                array_push($ps3_codes,$path);
+                break;
         }
-        
+        switch($version->os) {
+            case "PS1":
+            case "PSP":
+                array_push($psp_codes,$path);
+                break;
+        }
     }
-if(!$first_psp)
-echo '</ul></details>';
 }
 
-// Paths
 
+foreach($version->contributors as $contrib) {
+    if(!in_array($contrib,$contributors))
+        array_push($contributors,$contrib);   
+}
 
+}
 
-
-if (sizeof($version->locations) > 0) {
-    if (sizeof($version->path_locations) > 0) {
-    echo '<details open="open"><summary>Saves can be found in these locations:</summary>';
-echo '<ul>';
-        foreach ($version->path_locations as $location) {
+echo '<div class="game_version">';
+$printed = false;
+if($locations_found) {
+    echo '<h2>PC Saves</h2>';
+    echo '<div class="locations">';
+    if(sizeof($path_locations)>0) {
+        echo '<details open="open"><summary>Saves can be found in ';
+        if(sizeof($path_locations)>0)
+            echo 'this location';
+        else
+            echo 'these locations';
+        echo ':</summary>';
+        echo '<ul>';
+        foreach ($path_locations as $location) {
             echo '<li>';
-             printEv($location->ev,$db); 
+            printEv($location->ev,$db); 
             echo '\\' . $location->path;
             printCommonPathAttributes($location);
             echo '</li>';
         }
-        echo '</ul>';
+        echo '</ul></details>';
     }
-    if (sizeof($version->registry_locations) > 0) {
-    echo '<details><summary>These registry entries usually point to where the game keeps its saves:</summary>';
+    if (sizeof($registry_locations) > 0) {
+        echo '<details><summary>';
+        if (sizeof($registry_locations) ==1)
+            echo 'This registry entry';
+        else
+            echo 'These registry entries';
+        echo ' usually point to where the game keeps its saves:</summary>';
         echo '<ul>';
-foreach ($version->registry_locations as $location) {
+        foreach ($registry_locations as $location) {
             echo '<li>' . strtoupper($location->root) . '\\' . $location->key.'\\';
             if ($location->value == null)
                 echo '(Default)';
@@ -266,70 +257,156 @@ foreach ($version->registry_locations as $location) {
         }
         echo '</ul></details>';
     }
-    if (sizeof($version->shortcut_locations) > 0) {
-    echo '<details><summary>These shortcuts usually point to where the game keeps its saves:</summary>';
+    if (sizeof($shortcut_locations) > 0) {
+        echo '<details><summary>';
+        if (sizeof($shortcut_locations) == 1) 
+            echo 'This shortcut';
+        else
+            echo 'These shortcuts';
+        echo ' usually point to where the game keeps its saves:</summary>';
         echo '<ul>';
-foreach ($version->shortcut_locations as $location) {
+        foreach ($shortcut_locations as $location) {
             echo '<li>';
-printEv($location->ev,$db);
-echo '\\' . $location->path;
+            printEv($location->ev,$db);
+            echo '\\' . $location->path;
             printCommonPathAttributes($location);
             echo '</li>';
         }
         echo '</ul></details>';
     }
-    if (sizeof($version->game_locations) > 0) {
-    echo '<details open="open"><summary>This game shares a save location with another game:</summary>';
+    if (sizeof($game_locations) > 0) {
+        echo '<details open="open"><summary>This game shares a save location with another game:</summary>';
         echo '<ul>';
-foreach ($version->game_locations as $location) {
+        foreach ($version->game_locations as $location) {
             echo '<li><a href="#'.$location->name.'">'. $location->name . '</a>';
             printCommonPathAttributes($location);
             echo '</li>';
         }
         echo '</ul></details>';
     }
-}
-    if (sizeof($version->scumm_vm) > 0) {
-    echo '<details open="open"><summary>Possible ScummVM names for this game include:</summary>';
+    if (sizeof($scumm_vm) > 0) {
+        echo '<details open="open"><summary>Possible ScummVM names for this game include:</summary>';
         echo '<ul>';
-foreach ($version->scumm_vm as $location) {
+        foreach ($scumm_vm as $location) {
             echo '<li>'. $location->name;
             echo '</li>';
         }
         echo '</ul></details>';
     }
 
-echo '</div><div class="files">';
 
-if (sizeof($version->file_types) > 0) {
-	foreach($version->file_types as $type) {
-		echo '<details open="open"><summary>The '.$type->name.' files are:</summary>';
-        exportFiles($type->files);
-        echo '</details>';
-	}
-}                
+    echo '</div><div class="files">';
+    
+    if (sizeof($file_types) > 0) {
+        foreach(array_keys($file_types) as $type) {
+    		echo '<details open="open"><summary>The '.$type.' files are:</summary>';
+            exportFiles($file_types[$type]);
+            echo '</details>';
+    	}
+    }                
+    
+    echo '</div><div class="version_footer">';
+    
+    if ($version->comment != null) {
+        echo '<h3>Comment</h3>';
+        echo $version->comment;
+    }
+    
+    if ($version->restore_comment != null) {
+        echo '<h3>Restore Comment</h3>';
+        echo $version->restore_comment;
+    }
+    $printed = true;
+}
+if($printed) {
+    $printed = false;
+    echo '<hr />';
+}
+if(sizeof($ps3_codes)>0||sizeof($psp_codes)>0) {
+    echo '<h2>PlayStation Saves</h2>';
 
-echo '</div><div class="version_footer">';
-
-if ($version->comment != null) {
-    echo '<h3>Comment</h3>';
-    echo $version->comment;
 }
 
-if ($version->restore_comment != null) {
-    echo '<h3>Restore Comment</h3>';
-    echo $version->restore_comment;
+if(sizeof($ps3_codes)>0) {
+    echo '<details open="open"><summary>When exported to a USB drive from a PS3, the saves are in ';
+    if(sizeof($ps3_codes)==1)
+        echo 'this location';
+    else
+        echo 'these locations';
+    echo ':</summary>';
+    echo '<ul>';
+    foreach($ps3_codes as $code) {
+            echo '<li>';
+            if($code->disc!=null) {
+                echo "Disc ".$code->disc.": ";
+            }
+            if($version->os=="PS3")
+        		echo "PS3\\SAVEDATA";
+        	else
+        		echo "PS3\\EXPORT\\PSV";
+        	echo '\\BA' . $code->prefix . '?' . $code->suffix;
+        	if($code->append!=null) {
+        		echo $code->append;
+        	}
+        	echo '*';
+        	if($version->os=="PS3")
+        		echo '\\';
+        	if($code->type!=null&&$code->type!="Saves") {
+        		echo " (Contains ".$code->type." Data)";
+        	}
+            echo "</li>";
+
+    }
+    echo '</ul></details>';
+}
+if(sizeof($psp_codes)>0) {
+    echo '<details open="open"><summary>When saved to a PSP memory stick, the saves are in ';
+    if(sizeof($psp_codes)==1)
+        echo 'this location';
+    else
+        echo 'these locations';
+    echo ':</summary>';
+    echo '<ul>';
+    foreach($psp_codes as $code) {
+            echo '<li>';
+            if($code->disc!=null) {
+                echo "Disc ".$code->disc.": ";
+            }
+            echo 'PSP\\SAVEDATA\\' . $code->prefix . $code->suffix;
+            if($code->append!=null) {
+                echo $code->append;
+            }
+            echo '*\\';
+            if($code->type!=null&&$code->type!="Saves") {
+                    echo " (Contains ".$code->type." Data)";
+            }
+            echo "</li>";
+    }
+    echo '</ul></details>';
+    $printed = true;
 }
 
-// Side info box
+if($printed) {
+    $printed = false;
+    echo '<hr />';
+}
+
 echo '<div class="contributor_list">';
 echo '<h3>This information was contributed by ';
 
-echo listFormatter($version->contributors);
+echo listFormatter($contributors);
 echo '</h3>';  
 
 
 echo '</div>';
+
+
+echo '</div>';
+
+
+
+
+// Side info box
 
 /*
 $data = mysql_query("SELECT * FROM "
@@ -360,10 +437,4 @@ echo '</div>';
 document.title = site_title + " - <?php echo htmlspecialchars($game_data->title) ?>";
 
 </script>
-
-<?php
-
-echo '</div>';
-}
-?>
 
