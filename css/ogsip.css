@@ -104,6 +104,9 @@ display:none !important;
     float:left;
     width:48%;
 }
+.locations li {
+    margin:10px;    
+}
 .files {
     float:left;
     width:48%;

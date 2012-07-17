@@ -27,13 +27,13 @@ function printCommonPathAttributes($location) {
     		echo "<li>BUT you have to";
     
             if ($location->detract != null) {
-                echo ' detract ' . $location->detract . ' from the path';
+                echo ' detract "' . $location->detract . '" from the path';
         		if($location->append!=null) {
         			echo ' AND THEN';
     	    	}	
     		}
     		if ($location->append != null)
-                    echo ' append ' . $location->append. '';
+                    echo ' append "' . $location->append. '"';
     		if($location->detract == null )
     		    echo ' to the path';
         	echo '</li>';
@@ -150,7 +150,13 @@ if ($game_data->deprecated) {
 
 $i = 0;
 
+global $locations_found;
 $locations_found = false;
+
+global $path_locations;
+global $registry_locations;
+global $shortcut_locations;
+global $game_locations;
 
 $path_locations = array();
 $registry_locations = array();
@@ -161,27 +167,96 @@ $ps3_codes = array();
 $psp_codes = array();
 $contributors = array();
 $file_types = array();
+
+function endsWith($haystack,$needle) {
+    $substr = substr($haystack,strlen($haystack)-strlen($needle),strlen($needle));
+    return $needle = $substr;
+}
+function remove($string,$remove) {
+    $str = trim(substr($string,0,strlen($string)-strlen($remove)),'\\');
+    
+    if($str=="")
+        return null;
+    
+    return $str;
+}
+
+function ajdustLocation($location, $parent_location = null) {
+    if(!is_null($parent_location)) {
+        if(!is_null($parent_location->detract)) {
+            if(get_class($location)=="PathLocation") {
+                $location->path = remove($location->path,$parent_location->detract);
+            } else {
+                if(!is_null($location->append)) {
+                    if(endsWith($location->append,$parent_location->detract)) {
+                        $location->append = remove($location->append,$parent_location->detract);
+                    } 
+                } else if(is_null($location->detract)) {
+                    $location->detract = $parent_location->detract;
+                }
+                
+            }
+        }
+        if(!is_null($parent_location->append)) {
+            if(get_class($location)=="PathLocation") {
+                $location->path .= "\\".$parent_location->append;
+            } else {
+                if(is_null($location->append)) {
+                    $location->append = $parent_location->append;
+                }
+            }
+
+        }    
+    }
+    return $location;
+}
+
+function loadLocations($game_data, $db, $parent_location = null) {
+    global $path_locations;
+    global $registry_locations;
+    global $shortcut_locations;
+    global $game_locations;
+    $locations_found = false;
+    foreach ($game_data->versions as $version) {
+        if(!is_null($parent_location)) {
+            if(!$version->versionMatch($parent_location))
+            continue;
+        }
+        
+        foreach ($version->path_locations as $location) {
+            $locations_found = true;
+            array_push($path_locations,ajdustLocation($location,$parent_location));
+        }
+        foreach ($version->registry_locations as $location) {
+            $locations_found = true;
+            array_push($registry_locations,ajdustLocation($location,$parent_location));
+        }
+        foreach ($version->shortcut_locations as $location) {
+            $locations_found = true;
+            array_push($shortcut_locations,ajdustLocation($location,$parent_location));
+        }
+        foreach ($version->scumm_vm as $location) {
+            $locations_found = true;
+            array_push($scumm_vm,ajdustLocation($location,$parent_location));
+        }
+        foreach ($version->game_locations as $location) {
+            $locations_found = true;
+            $data = $db->Select("games",null,array("name"=>$location->name),array("name"=>"ASC"));
+            $row = $data[0];                        
+            $parent_name = $row->name;
+            $parent_data = new Game();
+            $parent_data->loadFromDb($parent_name, $row, $db);
+            loadLocations($parent_data,$db,$location);
+        }
+    }
+    return $locations_found;
+}
+
+
+$locations_found  = loadLocations($game_data,$db);
+
 foreach ($game_data->versions as $version) {
-    foreach ($version->path_locations as $location) {
-        $locations_found = true;
-        array_push($path_locations,$location);
-    }
-    foreach ($version->registry_locations as $location) {
-        $locations_found = true;
-        array_push($registry_locations,$location);
-    }
-    foreach ($version->shortcut_locations as $location) {
-        $locations_found = true;
-        array_push($shortcut_locations,$location);
-    }
-    foreach ($version->game_locations as $location) {
-        $locations_found = true;
-        array_push($game_locations,$location);
-    }
-    foreach ($version->scumm_vm as $location) {
-        $locations_found = true;
-        array_push($scumm_vm,$location);
-    }
+
 
     foreach($version->file_types as $file) {
         if(!array_key_exists($file->name,$file_types)) {
@@ -241,10 +316,10 @@ if($locations_found) {
     if (sizeof($registry_locations) > 0) {
         echo '<details><summary>';
         if (sizeof($registry_locations) ==1)
-            echo 'This registry entry';
+            echo 'This registry entry usually points';
         else
-            echo 'These registry entries';
-        echo ' usually point to where the game keeps its saves:</summary>';
+            echo 'These registry entries usually point';
+        echo ' to where the game keeps its saves:</summary>';
         echo '<ul>';
         foreach ($registry_locations as $location) {
             echo '<li>' . strtoupper($location->root) . '\\' . $location->key.'\\';
@@ -260,25 +335,15 @@ if($locations_found) {
     if (sizeof($shortcut_locations) > 0) {
         echo '<details><summary>';
         if (sizeof($shortcut_locations) == 1) 
-            echo 'This shortcut';
+            echo 'This shortcut usually points';
         else
-            echo 'These shortcuts';
-        echo ' usually point to where the game keeps its saves:</summary>';
+            echo 'These shortcuts usually point';
+        echo ' to where the game keeps its saves:</summary>';
         echo '<ul>';
         foreach ($shortcut_locations as $location) {
             echo '<li>';
             printEv($location->ev,$db);
             echo '\\' . $location->path;
-            printCommonPathAttributes($location);
-            echo '</li>';
-        }
-        echo '</ul></details>';
-    }
-    if (sizeof($game_locations) > 0) {
-        echo '<details open="open"><summary>This game shares a save location with another game:</summary>';
-        echo '<ul>';
-        foreach ($version->game_locations as $location) {
-            echo '<li><a href="#'.$location->name.'">'. $location->name . '</a>';
             printCommonPathAttributes($location);
             echo '</li>';
         }

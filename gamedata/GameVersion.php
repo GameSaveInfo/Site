@@ -58,6 +58,21 @@ class GameVersion extends AXmlData {
         return $this->generateHash();
     }
     
+    public function versionMatch($other) {
+        if($this->os!=$other->os)
+            return false;
+        if($this->platform!=$other->platform)
+            return false;
+        if($this->media!=$other->media)
+            return false;
+        if($this->region!=$other->region)
+            return false;
+        if($this->release!=$other->release)
+            return false;
+        
+        return true;
+    }
+    
     private static $os_names = null;
     public static function getOsDescription($name,$db) {
         if(is_null(self::$os_names)) {

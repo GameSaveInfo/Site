@@ -101,7 +101,7 @@ The <?php echo $title ?> is mantained by Matthew Barbour and various <a href="">
 <li><h2>The Easy Way</h2>
 Just e-mail me the game info at <a href="mailto:submissions@gamesave.info">submissions@gamesave.info</a>. I'll take care of the rest.
 </li>
-<li><h2>The Kinf-Of-Easy Way</h2>
+<li><h2>The Kind-Of-Easy Way</h2>
 Use <a href="http://masgau.org/">MASGAU</a>'s Save Game Analyzer. It's rigged up to send the game reports straight to me, and it'll make sure that all the game info is collected!
 </li>
 <li><h2>The Hard Way</h2>
