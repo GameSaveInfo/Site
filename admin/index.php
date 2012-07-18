@@ -97,7 +97,7 @@ Erase game
 
     if(isset($_POST['update_time'])) {
         $changelog = $_POST['changelog'];
-        Database::Insert("update_history",array("changelog"=>$changelog),"UPDATEING UPDATE HISTROY!!!");
+        $db->Insert("update_history",array("changelog"=>$changelog),"UPDATEING UPDATE HISTROY!!!");
     }
 
 
