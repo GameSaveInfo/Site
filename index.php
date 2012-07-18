@@ -88,7 +88,7 @@ var site_title = "<?php echo $title; ?>";
 </div>
 
 <div id="credits">
-<?php echo $title ?> is mantained by Matthew Barbour and various <a href="">Contributors</a>
+<?php echo $title ?> is mantained by Matthew Barbour and various <a href="contributors"  class="popup_link">Contributors</a>
 </div>
 
 <div id="menu">
@@ -111,6 +111,19 @@ Use <a href="http://masgau.org/">MASGAU</a>'s Save Game Analyzer. It's rigged up
 <li><h2>The Hard Way</h2>
 Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repository</a>! Just fork it and commit your heart out! (If you don't understand this, you probably don't want to use this method. E-mail me if you'd like to learn about it!)
 </li>
+</ul>
+</div>
+
+<div id="contributors" class="popup">
+<h1>Contributors!</h1>
+<ul>
+<?php
+$data = $db->RunStatement("SELECT contributor as name, COUNT(*) as count FROM game_contributions GROUP BY name ORDER BY count DESC");
+ foreach($data as $row) {
+    echo "<li>".$row->count ." - " .$row->name."</li>";
+}
+
+?>
 </ul>
 </div>
 

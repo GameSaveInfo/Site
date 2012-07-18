@@ -107,7 +107,7 @@ function loadGame(game) {
             } else {
                  $('#games').animate({
                     scrollTop: 0
-                }, 10);
+                }, 500);
             }
 
     		setUpToolTips();	
