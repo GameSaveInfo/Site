@@ -84,7 +84,7 @@ var site_title = "<?php echo $title; ?>";
 </div>
 
 <div id="credits">
-The <?php echo $title ?> is mantained by Matthew Barbour and various <a href="">Contributors</a>
+<?php echo $title ?> is mantained by Matthew Barbour and various <a href="">Contributors</a>
 </div>
 
 <div id="menu">

@@ -1,10 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <!--simple elements-->
   <xs:element name="title" type="xs:string"/>
   <xs:element name="contributor" type="xs:string"/>
   <xs:element name="comment" type="xs:string"/>
+  <xs:element name="backup_comment" type="xs:string"/>
   <xs:element name="restore_comment" type="xs:string"/>
 
   <!--attributes-->
@@ -25,6 +26,7 @@
         <xs:enumeration value="steamcommon"/>
         <xs:enumeration value="steamsourcemods"/>
         <xs:enumeration value="steamuserdata"/>
+        <xs:enumeration value="ubisoftsavestorage"/>
         <xs:enumeration value="userprofile"/>
         <xs:enumeration value="userdocuments"/>
         <xs:enumeration value="startmenu" />
@@ -124,9 +126,10 @@
   <xs:attribute name="platform">
     <xs:simpleType>
       <xs:restriction base="xs:string">
-        <xs:enumeration value="SteamCloud"/>
-        <xs:enumeration value="ScummVM"/>
         <xs:enumeration value="Flash"/>
+        <xs:enumeration value="ScummVM"/>
+        <xs:enumeration value="SteamCloud"/>
+        <xs:enumeration value="UbisoftSaveStorage"/>
         <xs:enumeration value="RenPy"/>
       </xs:restriction>
     </xs:simpleType>

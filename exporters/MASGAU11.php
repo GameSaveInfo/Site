@@ -66,19 +66,25 @@ class MASGAU11 extends AXmlExporter {
         if(sizeof($version->ps_codes)==0&&
             sizeof($version->locations)==0)
             return null;
-        
+
+        $ps_codes = false;
         foreach($version->ps_codes as $ps_code) {
             $pele = $this->createElement("ps_code");
             $this->processFields($ps_code,$pele,array("game_version","type","disc","append"));
             $vele->appendChild($pele);
+            $ps_codes = true;
         }
         
         
         $leles = $this->createLocationsElements($version->locations);
         
-        if(!is_null($leles)) {
+        if(!is_null($leles)&&sizeof($leles)!=0) {
             foreach($leles as $lele) {                
                $vele->appendChild($lele);
+            }
+        } else {
+            if(!$ps_codes) {
+                return null;
             }
         }
         
@@ -159,24 +165,30 @@ class MASGAU11 extends AXmlExporter {
             foreach($locations as $location) {
                 $new_lele = $this->createElement(self::$loc_types[get_class($location)]);
     
-                if(get_class($location)=="ShortcutLocation") {
-                    if($location->ev!="startmenu")
-                        continue;
-                    $this->setAttribute($new_lele,"shortcut",$location->path);
-                } else {
-                    if(property_exists($location,"ev")&&!is_null($location->ev)) {
-                        $this->setAttribute($new_lele,"environment_variable",$location->ev);
-                    }
-                    if(property_exists($location,"path")) {
-                        $this->setAttribute($new_lele,"path",$location->path);
-                    }
+                switch(get_class($location)) {
+                    case "GameLocation":
+                        $this->setGameVersionAttributes($new_lele,$location);
+                        break;
+                    case "ShortcutLocation":
+                        if($location->ev!="startmenu")
+                            continue 2;
+                        $this->setAttribute($new_lele,"shortcut",$location->path);
+                        break;
+                    case "PathLocation":
+                        switch($location->ev) {
+                            case "ubisoftsavestorage":
+                            continue 3;
+                        }
+                        if(property_exists($location,"ev")&&!is_null($location->ev)) {
+                            $this->setAttribute($new_lele,"environment_variable",$location->ev);
+                        }
+                        if(property_exists($location,"path")) {
+                            $this->setAttribute($new_lele,"path",$location->path);
+                        }
+                        break;
                 }
-
-                if(get_class($location)=="GameLocation") {
-                    $this->setGameVersionAttributes($new_lele,$location);
-                } else {
-                    $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for"));
-                }
+                if(get_class($location)!="GameLocation")
+                        $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for","os"));
 
                 if(!is_null($location->only_for)) {
                     $pv = null;
@@ -270,6 +282,7 @@ class MASGAU11 extends AXmlExporter {
             }
             $this->setAttribute($element,"country",$country);
         }
+        
         $this->processFields($source,$element, array("game_version","name", "virtualstore", "detect","title","comment","restore_comment","os","version","platform","media","release","region"));
 
         

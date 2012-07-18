@@ -61,7 +61,16 @@ class ExportController {
     
     
     protected function exportFile($exporter, $file) {
-        $nocache = false;
+        switch(substr($_SERVER["SERVER_NAME"],0,3)) {
+            case "192":
+            case "sag":
+                $nocache = true;
+                break;
+            default:
+                $nocache = false;
+                break;
+        }
+        
         header("Content-Type:text/xml; charset=UTF-8'");
         $file = $_GET['file'];
         $cache_criteria = array("exporter"=>$exporter,"file"=>$file);
