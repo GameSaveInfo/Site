@@ -2,16 +2,10 @@ body {
 	background-color:#eeeeec;
 	font-family: sans-serif;
     font-size:10pt;
+    color:#2e3436;   
 }
-div.search {
-    position:absolute;
-	right:25%;
-	top:40px;
-}
-div.search input {
-    position:relative;
-    top:-2px;
-    margin-left:5px;
+a {
+    color:#2e3436;   
 }
 .ui-autocomplete {
 	max-height: 50%;
@@ -23,7 +17,7 @@ div.search input {
 }
 
 .ev_name {
-    color:red;    
+    color:#ce5c00;    
 }
 .tooltip {
     white-space:nowrap;    
@@ -45,15 +39,34 @@ div.search input {
 	top:120px;
 	height:30px;
 }
+
+div.spinner {
+    position:absolute;    
+    left:20%;
+    right:0;
+    bottom:0;
+    z-index:0;
+    top:40%;
+    text-align:center;
+}
 div#letters label {
     font-size:10pt;   
+}
+div.search {
+    position:absolute;
+    left:5px;
+	top:155px;
+    right:80%;
+}
+div.search input {
+    width:96%;
 }
 
 #games {
 	position:absolute;
 	left:3px;
 	bottom:3px;
-	top:160px;
+	top:185px;
 	right:80%;
 	overflow:auto;
 	margin:0 !important;
@@ -65,12 +78,14 @@ div#letters label {
     padding:0 !important;
     margin:0 !important;
     overflow:hidden;
+    border-radius:0;
 }
 #games input {
 display:none !important;
 }
 
 #game {
+    display:none;
 	position:absolute;
 	left:20%;
     margin-left:10px;

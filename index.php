@@ -11,8 +11,8 @@
 <title><?php echo $title; ?></title>
 <link media="Screen" href="libs/tooltip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="libs/popups.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="css/gamesaveinfo-theme/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="css/ogsip.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="libs/jquery/css/redmond/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
 <script type="text/javascript" src="libs/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="libs/jquery/jquery-ui-1.8.21.custom.min.js"></script>
 <script type="text/javascript" src="libs/yoxview/yoxview-init.js"></script>
@@ -59,8 +59,12 @@ var site_title = "<?php echo $title; ?>";
  in the database
 </h3>
 
+<div class="spinner">
+<img src="images/loading.gif" />
+</div>
+
 <div class="search">
-<label for="search">Search:</label><input id="search" />
+<input id="search" value="Search..." />
 </div>
 
 <form><div id="letters">

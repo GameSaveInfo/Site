@@ -6,7 +6,7 @@ $(document).ready(function() {
 	} else if(window.location.hash == "#numeric") {
 		letter = "numeric";
 	} else {
-		letter = window.location.hash.substring(1,2);
+		letter = window.location.hash.substring(1,2).toUpperCase();;
         if(isNumber(letter)) {
             letter = "numeric";
         }
@@ -25,6 +25,9 @@ $(document).ready(function() {
     	    changeLetter(ui.item.value);
         }
     });
+    $( "#search" ).click(function() {
+        document.getElementById("search").value = "";
+    });
     
 });
 
@@ -35,7 +38,8 @@ function isNumber(n) {
 var last_letter;
 var game;
 function hashchange() {
-    document.getElementById("search").value = "";
+    document.getElementById("search").value = "Search...";
+    $("#search").blur();
 	var game_name = "";
 	if(window.location.hash == "#" || window.location.hash == "") {
 		letter = "D";
@@ -53,6 +57,7 @@ function hashchange() {
 		loadLetter(letter, game_name);
 	} else {
 		loadGame(game_name);
+        $("#games").buttonset('refresh');
 	}
 	last_letter = letter;
 
@@ -63,29 +68,46 @@ function loadLetter(letter, game_name) {
         radio.checked = true;
         
         
-		if(game_name.length>1) {
-			var radio  = document.getElementById(game_name);
-			radio.checked = true;
-		} else {
-			var radio = document.getElementsByName("game");
-
-			radio[0].checked = true;
-		}
 	
-		$("#games").buttonset();
+        $("#letters").buttonset('refresh');
 		loadGame(game_name);
+        var tmp = $("#" + radio.id + "_label");
+        
 	});
 }
 var last_game;
 function loadGame(game) {
 	if(last_game != game ) {
-	$("#game").empty();
-	$("#game").load("modules/game.php?name=" + game, function() {
-		
-		$(".game_versions").buttonset();
-		setUpToolTips();	
-	});
-	last_game = game;
+        
+    	if(game.length>1) {
+			var radio  = document.getElementById(game);
+			radio.checked = true;
+		} else {
+			var radio = document.getElementsByName("game");
+            radio = radio[0];
+			radio.checked = true;
+		}
+        $("#games").buttonset();
+
+        $("#game").fadeOut(500);
+        $(".spinner").fadeIn(500);
+
+    	$("#game").empty();
+    	$("#game").load("modules/game.php?name=" + game, function() {
+            last_game = game;
+            
+            $("#game").stop(true, true).fadeIn(500);
+            $(".spinner").stop(true, false).fadeOut(500);
+            
+            var game_label = $("#" + game + "_label");
+            if(game_label.offset()!=null) {
+                 $('#games').animate({
+                    scrollTop: game_label.offset().top - $("#games").offset().top + $('#games').scrollTop() - 10
+                }, 500);
+            }
+
+    		setUpToolTips();	
+    	});    
 	}
 }
 
