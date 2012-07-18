@@ -104,6 +104,10 @@ function loadGame(game) {
                  $('#games').animate({
                     scrollTop: game_label.offset().top - $("#games").offset().top + $('#games').scrollTop() - 10
                 }, 500);
+            } else {
+                 $('#games').animate({
+                    scrollTop: 0
+                }, 10);
             }
 
     		setUpToolTips();	
