@@ -36,7 +36,9 @@ class MASGAU11 extends AXmlExporter {
     protected function createGameVersionElement($game, $version) {
         $vele = $this->createElement("game");
         
-        $this->setGameVersionAttributes($vele, $version);
+        if(!$this->setGameVersionAttributes($vele, $version)) {
+            return null;
+        }
         
         $title = "";
         
@@ -227,7 +229,20 @@ class MASGAU11 extends AXmlExporter {
         $platform = null;
         
         if(!is_null($source->os)) {
-            $platform = $source->os;
+            switch($source->os) {
+                case "Windows":
+                case "DOS":
+                case "PS1":
+                case "PS2":
+                case "PS3":
+                case "PSP":
+                    $platform = $source->os;
+                case "Android":
+                    break;
+                default:
+                    throw new Exception($source->os." not known");
+                    break;
+            }
         }
 
         
@@ -255,6 +270,8 @@ class MASGAU11 extends AXmlExporter {
                 case "ScummVM":
                 case "Flash":
                     $platform = $source->platform;
+                    break;
+                case "RenPy":
                     break;
                 default:
                     throw new Exception($source->platform." not known");
@@ -285,7 +302,7 @@ class MASGAU11 extends AXmlExporter {
         
         $this->processFields($source,$element, array("game_version","name", "virtualstore", "detect","title","comment","restore_comment","os","version","platform","media","release","region"));
 
-        
+        return true;
     }
 
 }

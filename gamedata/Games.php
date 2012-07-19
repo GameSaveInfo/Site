@@ -102,7 +102,7 @@ class Games {
                 $game->loadXml($node);
                 $name = $game->name;
                 if(array_key_exists($name,self::$games))
-                    throw new Exception("DUPLICAT GAME NAME ".$name);
+                    throw new Exception("DUPLICATE GAME NAME ".$name);
                 self::$games[$name] = $game;
 		} else if($node->localName == '') {
 		continue;
@@ -115,29 +115,14 @@ class Games {
         }
     }
 
-    public static function loadFromDb($file,$exporter,$db) {
-        global $settings;
-        if($file!=null) {
-            $result = $db->Select("xml_export_files",null,
-                                    array("file"=>$file,"exporter"=>$exporter),null);
-            $row = $result[0];
-            $criteria = "games.name = v.name AND ".$row->game_criteria;
-            if(!is_null($row->version_criteria)) {
-                $criteria .= " AND ".$row->version_criteria;
-            }
-        }
-        //echo "SELECT *, games.name AS name, games.title AS title, games.comment AS comment FROM games, game_versions v WHERE ".$criteria." ORDER BY games.name";
-        $result = $db->RunStatement("SELECT *, games.name AS name, games.title AS title, games.comment AS comment FROM games, game_versions v WHERE ".$criteria." ORDER BY games.name");
-            
-//            array("games","game_versions"=>"v"),
-  //                              "*, g.title title, g.comment comment",
-    //                            $criteria,
-      //                          "g.name");
-
+    public static function loadFromDb($db,$game_criteria = null,$version_criteria = null) {        
+        $result = $db->Select("games",null,$game_criteria,"name");
+        
         require_once('Game.php');
         require_once('GameVersion.php');
-        if(!is_null($row->version_criteria)) {
-            GameVersion::$version_criteria .= $row->version_criteria;
+        
+        if(!is_null($version_criteria)) {
+            GameVersion::$version_criteria = $version_criteria;
         }
         
 

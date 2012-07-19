@@ -9,16 +9,16 @@
 <html>
 <head>
 <title><?php echo $title; ?></title>
-<link media="Screen" href="libs/tooltip.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="libs/popups.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="css/gamesaveinfo-theme/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="css/ogsip.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="libs/jquery/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="libs/jquery/jquery-ui-1.8.21.custom.min.js"></script>
-<script type="text/javascript" src="libs/yoxview/yoxview-init.js"></script>
-<script type="text/javascript" src="libs/tooltip.js"></script>
-<script type="text/javascript" src="libs/popups.js"></script>
-<script type="text/javascript" src="javascript/ogsip.js"></script>
+<link media="Screen" href="/libs/tooltip.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/libs/popups.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/css/gamesaveinfo-theme/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/css/ogsip.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="/libs/jquery/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/libs/jquery/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="/libs/yoxview/yoxview-init.js"></script>
+<script type="text/javascript" src="/libs/tooltip.js"></script>
+<script type="text/javascript" src="/libs/popups.js"></script>
+<script type="text/javascript" src="/js/ogsip.js"></script>
 <script type="text/javascript">
 var availableGames = [
 <?php
@@ -92,11 +92,11 @@ var site_title = "<?php echo $title; ?>";
 </div>
 
 <div id="menu">
-<a href="adding_games" class="popup_link">Help Add Games</a>
-<a href="xml_format.php">XML Format</a>
-<a href="api/">API</a>
-<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a>
-<a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a>
+<a href="adding_games" class="popup_link">Help Add Games</a> - 
+<a href="/xml_format.php">XML Format</a> - 
+<a href="/api/">API</a> - 
+<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
+<a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a>
 </div>
 

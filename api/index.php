@@ -1,19 +1,19 @@
 <?php
 include_once "../headers.php";
 
-include_once "../exporters/ExportController.php";
+include_once "APIController.php";
 
-$export = new ExportController($db);
+$export = new APIController($db);
 
-$exporter = null;
-if (isset($_GET['exporter'])) {
-        $exporter = $_GET['exporter'];
+$format = null;
+if (isset($_GET['format'])) {
+        $format = $_GET['format'];
 }
-$file = null;
-if (isset($_GET['file'])) {
-        $file = $_GET['file'];
+$criteria = null;
+if (isset($_GET['criteria'])) {
+        $criteria = $_GET['criteria'];
 }
 
-$export->drawPage($exporter,$file);
+$export->drawPage($format,$criteria);
 
 ?>

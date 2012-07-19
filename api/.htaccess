@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /~masgau/gamesaveinfo/api/
+
+RewriteRule ^([^/]+)/(.+)$ index.php?format=$1&criteria=$2 [L]
+RewriteRule ^([^/]+)/$ index.php?format=$1 [L]

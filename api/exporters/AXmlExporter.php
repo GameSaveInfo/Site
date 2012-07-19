@@ -5,6 +5,8 @@ abstract class AXmlExporter extends AExporter {
     private $root;
     private $schema = null;
     
+    public static $content_type = "text/xml";
+    
     public function __construct($schema = null, $comment = null) {
         parent::__construct();
         $this->xml = new DOMDocument();
@@ -32,6 +34,9 @@ abstract class AXmlExporter extends AExporter {
         }
         
         foreach(Games::$games as $game) {
+            if(sizeof($game->versions)==0)
+                continue;
+            
             $game_element = $this->createGameElement($game);
             if($game_element==null)
                 continue;

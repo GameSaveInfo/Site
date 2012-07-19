@@ -29,6 +29,8 @@ class Game extends AXmlData {
     
     public $written = false;
     
+    public static $types = array("game","mod","system","expansion");
+    
     public function newWriteToDb($con) {
         
         if($this->for!=null) {

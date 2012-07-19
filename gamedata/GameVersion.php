@@ -84,21 +84,23 @@ class GameVersion extends AXmlData {
         }
         return self::$os_names[$name];
     }
-    
+        
+    public static $id_fields = array("name","os","platform","region","media","release");
+
     public function getFields() {
-        return array("name"=>   array("string","name",true),
-                    "os"=>      array("string","os",true),
-                    "platform"=>array("string","platform",true),
-                    "region"=>  array("string","region",true),
-                    "media"=>   array("string","media",true),
-                    "release"=> array("string","release",true),
-                    //"episode"=> array("string","episode",true),
-                    "title"=>   array("string","title",false),
-                    "comment"=> array("string","comment",false),
-                    "restore_comment"=>array("string","restore_comment",false),
-                    "virtualstore"=>array("string","virtualstore",false),
-                    "detect"=>  array("string","detect",false));    
+        $return_me = array();
+        foreach(self::$id_fields as $field) {
+            $return_me[$field] = array("string",$field,true);
+        }
+        //"episode"=> array("string","episode",true),
+        $return_me["title"] = array("string","title",false);
+        $return_me["comment"] = array("string","comment",false);
+        $return_me["restore_comment"] = array("string","restore_comment",false);
+        $return_me["virtualstore"] = array("string","virtualstore",false);
+        $return_me["detect"] = array("string","detect",false);
+        return $return_me;
     }
+    
     protected function getSubObjects() {
         return array(   "locations"=>null,
                         "scumm_vm"=>"ScummVM",
@@ -106,6 +108,7 @@ class GameVersion extends AXmlData {
                         "identifiers"=>"IdentifyingFile",
                         "file_types"=>"FileType");    
     }
+    
     protected function getNodes() {
         return array(   "scummvm"=>     array("ScummVM","scumm_vm"),
                         "ps_code"=>     array("PlayStationCode","ps_codes"),
@@ -122,9 +125,12 @@ class GameVersion extends AXmlData {
     public static $version_criteria = null;
     
     public function getRowsFor($id,$db) {
-        $crit = "`name` = '".$id."'";
         if(!is_null(self::$version_criteria))
-            $crit .= " AND " . self::$version_criteria;
+            $crit = self::$version_criteria;
+        else
+            $crit = array();
+            
+        $crit['name'] = $id;
         return $db->Select(self::$table_name,null,$crit,$this->generateOrder());
     }
     
@@ -179,10 +185,10 @@ class GameVersion extends AXmlData {
     }
 
 
-    private static $id_fields = array("os","platform","region","media");
+    private static $title_fields = array("os","platform","region","media");
     public function getVersionTitle() {
         $header = "";
-        foreach(self::$id_fields as $field) {
+        foreach(self::$title_fields as $field) {
             if($this->$field!=null) {
                 $header .= $this->$field." ";
             }
