@@ -94,6 +94,7 @@ var site_title = "<?php echo $title; ?>";
 <div id="menu">
 <a href="adding_games" class="popup_link">Help Add Games</a>
 <a href="xml_format.php">XML Format</a>
+<a href="api/">API</a>
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a>
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a>
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a>
@@ -112,6 +113,10 @@ Use <a href="http://masgau.org/">MASGAU</a>'s Save Game Analyzer. It's rigged up
 Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repository</a>! Just fork it and commit your heart out! (If you don't understand this, you probably don't want to use this method. E-mail me if you'd like to learn about it!)
 </li>
 </ul>
+</div>
+
+<div id="virtualstore" class="popup">
+<h1>VirtualStore in Windows Vista, 7 & 8</h1>
 </div>
 
 <div id="contributors" class="popup">
