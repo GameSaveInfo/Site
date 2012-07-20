@@ -14,9 +14,9 @@ class GameSaveManager extends AExporter {
         
         if(!is_null($comment)) {
             foreach(explode("\n",$comment) as $com) {
-                echo "## ".$com."\n";
+                $this->doc .= "## ".$com."\n";
             }
-            echo "\n";
+            $this->doc .= "\n";
         }
 //        $this->root->appendChild($this->xml->createAttribute("date"))->
  //               appendChild($this->xml->createTextNode(self::formatDate($date)));
