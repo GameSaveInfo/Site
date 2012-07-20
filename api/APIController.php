@@ -267,7 +267,7 @@ class APIController {
             $output = $exp->export();
             
             if(!$nocache&&!$exp->error_occured) {
-                if(sizeof($cache))!=0)
+                if(sizeof($cache)!=0)
              	    $this->link->Delete("export_cache",$cache_criteria);
 
                 $this->link->Insert("export_cache",array("exporter"=>$exporter,"criteria"=>trim($criteria,'/'),"contents"=>$output));
