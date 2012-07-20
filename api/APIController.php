@@ -94,6 +94,9 @@ class APIController {
         echo "Or to filter to only PS3 games:<br/>";
         linkHere("GameSaveInfo20/PS3/");
         echo "<br/>";
+        echo "You can filter by game names with wildcards too. Actually it's just the asterisk, but it works:<br/>";
+        linkHere("GameSaveInfo20/D*/");
+        echo "<br/>";
         echo "You can combine criteria by adding more to the end of the URL, for instance this gets all the PS1 games in the USA region:<br/>";
         linkHere("GameSaveInfo20/PS1/USA/");
         echo "<br/>";
@@ -134,7 +137,7 @@ class APIController {
         
     }        
     
-    protected function export($exporter, $criteria = null) {
+    protected function export($exporter, $criteria = null,$comment = null, $date = null) {
         switch(substr($_SERVER["SERVER_NAME"],0,3)) {
             case "192":
             case "sag":
@@ -146,7 +149,7 @@ class APIController {
                 break;
         }
         
-        $nocache = false;
+        //$nocache = false;
         $cache_criteria = array("exporter"=>$exporter,"criteria"=>trim($criteria,'/'));
         
         $cache = $this->link->Select("export_cache",null,$cache_criteria,null);        
@@ -188,9 +191,16 @@ class APIController {
                     return $array;
                 }
                 
+                
                 if(!array_key_exists($key,$array)) {
                     $array[$key] = array();
+                
                 }
+                if(!is_array($array[$key])) {
+                    $tmp = $array[$key];
+                    $array[$key] = array( $tmp );
+                }
+                
                 array_push($array[$key],$value);
                 return $array;
             }
@@ -199,14 +209,12 @@ class APIController {
             if(!is_null($criteria)) {
                 $args = array_filter(explode("/",$criteria));
                 if(sizeof($args)>0) {
-                    
                     foreach($args as $arg) {
                         $not = false;
                         if(substr($arg,0,1)=="!") {
                             $arg = substr($arg,1);
                             $not = true;
                         }
-                        
                         if($arg=="deprecated") {
                             $game_criteria['deprecated'] = 1;
                         } else if(in_array($arg,Game::$types)) {
@@ -221,17 +229,24 @@ class APIController {
                         } else if(in_array($arg,$this->platforms)) {
                             $version_criteria = addCriteria($version_criteria,'platform',$arg,$not);
                             
-                        } else if(in_array($arg,$this->regions)) {
+                        } else if(in_array($arg,$this->regions)) {                
                             $version_criteria = addCriteria($version_criteria,'region',$arg,$not);
                             
-                        } else if(!array_key_exists('name',$game_criteria)) {
-                            $game_criteria['name'] = $arg;
+                        } else if(in_array($arg,GameVersion::$id_fields)) {                
+                            $version_criteria = addCriteria($version_criteria,$arg,null,!$not);
+                            
+                        } else  {
+                            if(strstr($arg,"*")) {
+                                $arg = str_replace("*","%",$arg);
+                            }
+                            
+                            $game_criteria = addCriteria($game_criteria,'name',$arg,$not);
 
-                        } else {
-                            echo '<pre>';
-                            var_dump(array_filter(explode("/",$criteria)));
-                            echo '</pre>';
-                            throw new Exception("Unknown argument provided: " .$arg);
+            //            } else {,'
+              //              echo '<pre>';
+                //            var_dump(array_filter(explode("/",$criteria)));
+                  //          echo '</pre>';
+                    //        throw new Exception("Unknown argument provided: " .$arg);
                         }
                     }
                         
@@ -242,8 +257,12 @@ class APIController {
             
             Games::loadFromDb($this->link, $game_criteria, $version_criteria);
             
-            $exp= new $exporter("Game Criteria: ".$this->link->buildCriteriaString($game_criteria)."\n".
-                                "Version Criteria: ".$this->link->buildCriteriaString($version_criteria));
+            if(is_null($comment)) {
+                $comment = "Game Criteria: ".$this->link->buildCriteriaString($game_criteria)."\n".
+                                "Version Criteria: ".$this->link->buildCriteriaString($version_criteria);
+            }
+            
+            $exp= new $exporter($comment,$date);
                         
             $output = $exp->export();
             

@@ -3,8 +3,8 @@
 require_once 'AXmlExporter.php';
 class MASGAU11 extends AXmlExporter {
 
-    public function __construct($comment = null) {
-        parent::__construct("games.xsd",$comment);
+    public function __construct($comment = null, $time = null) {
+        parent::__construct("games.xsd",$comment,$time);
     }
     
     protected function createRootElement() {

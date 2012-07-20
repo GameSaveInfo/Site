@@ -7,7 +7,7 @@ abstract class AXmlExporter extends AExporter {
     
     public static $content_type = "text/xml";
     
-    public function __construct($schema = null, $comment = null) {
+    public function __construct($schema = null, $comment = null, $date = null) {
         parent::__construct();
         $this->xml = new DOMDocument();
         $this->xml->encoding = 'UTF-8';
@@ -19,13 +19,10 @@ abstract class AXmlExporter extends AExporter {
             $this->schema = $schema;
             $this->setAttribute($this->root,"xsi:noNamespaceSchemaLocation",$schema);   
         }
-
         date_default_timezone_set("UTC");
         $this->root->appendChild($this->xml->createAttribute("date"))->
-                appendChild($this->xml->createTextNode(self::formatDate(null)));
-        
-        
-        
+                appendChild($this->xml->createTextNode(self::formatDate($date)));
+
         $this->xml->appendChild($this->root);
         
         if(!is_null($comment)) {
@@ -52,6 +49,8 @@ abstract class AXmlExporter extends AExporter {
     }
     
     public function doExport() {
+        
+        
         $text = $this->xml->saveXML();
 
         $document = new DOMDocument();

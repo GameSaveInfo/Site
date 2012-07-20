@@ -2,8 +2,8 @@
 require_once 'AXmlExporter.php';
 class GameSaveInfo20 extends AXmlExporter {
 
-    public function __construct($comment = null) {
-        parent::__construct("games.xsd",$comment);
+    public function __construct($comment = null, $time = null) {
+        parent::__construct("games.xsd",$comment,$time);
     }
     protected function createRootElement() {
         $root = $this->createElement("programs");
