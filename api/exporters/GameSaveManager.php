@@ -103,19 +103,39 @@ class GameSaveManager extends AExporter {
                                     case "appdata":
                                     case "public":
                                     case "savedgames":
-                                        $loc_text = "\t%".strtoupper($loc->ev)."%\\".$loc->path."\n";
+                                    case "userprofile":
+                                    case "allusersprofile":
+                                        $loc_text = "\t%".strtoupper($loc->ev)."%\\".$loc->path;
+                                        if(!is_null($save->path))
+                                            $loc_text .= "\\".$save->path;
+                                        $loc_text .= "\n";
                                         break;
                                     case "installlocation":
                                     case "steamcommon":
                                     case "steamuserdata":
                                     case "ubisoftsavestorage":
+                                    case "steamsourcemods":
+                                    case "steamuser":
+                                    case "altsavepaths":
+                                    case "flashshared":
+                                    case "drive":
                                         continue 3;
                                     default:
                                         throw new Exception($loc->ev." not known");
                                 }
                                 break;
                             case "RegistryLocation":
-                                $loc_text = "\t%REGISTRY%\\".$save->path."\n";
+                                $loc_text = "\t%REGISTRY%\\";
+                                if(!is_null($save->path))
+                                    $loc_text .= $save->path;
+                                    
+                                if(!is_null($loc->detract))
+                                    continue 2;
+
+                                if(!is_null($loc->append)) {
+                                    $loc_text.= "\\".$loc->append;
+                                }
+                                $loc_text .= "\n";
                                 $loc_text .= "\t\tRegHive: HKEY_".strtoupper($loc->root)."\n";
                                 $loc_text .= "\t\tRegPath: ".$loc->key."\n";
                                 $loc_text .= "\t\tRegValue: ".$loc->value."\n";
