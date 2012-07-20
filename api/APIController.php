@@ -159,8 +159,8 @@ class APIController {
 	        $last_date = $last_date->timestamp;
         	$tmp_cache = $cache[0];
         	if($last_date>$tmp_cache->timestamp) {
-        		$this->link->Delete("xml_cache",$cache_criteria);
-		        $cache = $this->link->Select("xml_cache",null,$cache_criteria,null);        
+        		$this->link->Delete("export_cache",$cache_criteria);
+		        $cache = $this->link->Select("export_cache",null,$cache_criteria,null);        
         	}
         }
             $folder =  dirname(__FILE__);
@@ -266,9 +266,12 @@ class APIController {
                         
             $output = $exp->export();
             
-            if(!$nocache&&!$exp->error_occured)
+            if(!$nocache&&!$exp->error_occured) {
+                if(sizeof($cache))!=0)
+             	    $this->link->Delete("export_cache",$cache_criteria);
+
                 $this->link->Insert("export_cache",array("exporter"=>$exporter,"criteria"=>trim($criteria,'/'),"contents"=>$output));
-                
+            }
                 
             header("Content-Type:".$exporter::$content_type."; charset=UTF-8'");
 
