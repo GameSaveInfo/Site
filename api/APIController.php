@@ -54,8 +54,7 @@ class APIController {
     
     protected function drawExporterList() {
         
-        function linkHere($address, $newline = true, $text = null) {
-                
+        function linkHere($address, $newline = true, $text = null) {                
             global $_SERVER;
             $address = "http://".$_SERVER["SERVER_NAME"].'/api/'.$address;
             if(is_null($text))

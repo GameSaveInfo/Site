@@ -60,7 +60,7 @@ function hashchange() {
         $("#games").buttonset('refresh');
 	}
 	last_letter = letter;
-
+    _gaq.push(['_trackPageview', '/' + window.location.hash.substring(1)]);
 }
 function loadLetter(letter, game_name) {
 	$("#games").load("modules/games.php?letter=" + letter, function(game) {

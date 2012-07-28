@@ -35,7 +35,11 @@ $data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",ar
 
 var site_title = "<?php echo $title; ?>";
 </script>
-<script type="text/javascript">
+<?php
+
+global $test_mode;
+if(!$test_mode) {
+    echo"<script type=\"text/javascript\">
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-32952901-1']);
@@ -47,7 +51,11 @@ var site_title = "<?php echo $title; ?>";
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>
+</script>";
+}
+
+
+?>
 </head>
 <body>
 
