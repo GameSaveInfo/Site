@@ -161,58 +161,70 @@ class MASGAU11 extends AXmlExporter {
     static $loc_types = array("PathLocation"=>"location_path","RegistryLocation"=>"location_registry",
                         "ShortcutLocation"=>"location_shortcut","GameLocation"=>"location_game");
                         
+    protected function createLocationElement($leles, $location) {
+        $new_lele = $this->createElement(self::$loc_types[get_class($location)]);
+
+        switch(get_class($location)) {
+            case "GameLocation":
+                $this->setGameVersionAttributes($new_lele,$location);
+                break;
+            case "ShortcutLocation":
+                if($location->ev!="startmenu")
+                    return $leles;
+                $this->setAttribute($new_lele,"shortcut",$location->path);
+                break;
+            case "PathLocation":
+                switch($location->ev) {
+                    case "ubisoftsavestorage":
+                        return $leles;
+                    case "commonapplicationdata":
+                        $location->ev = "allusersprofile";
+                        $location->only_for = "WindowsVista";
+                        $leles = $this->createLocationElement($leles,$location);
+                        $location->only_for = "WindowsXP";                        
+                        $location->path .= "\Application Data";
+                        break;
+                }
+                if(property_exists($location,"ev")&&!is_null($location->ev)) {
+                    $this->setAttribute($new_lele,"environment_variable",$location->ev);
+                }
+                if(property_exists($location,"path")) {
+                    $this->setAttribute($new_lele,"path",$location->path);
+                }
+                break;
+        }
+
+        if(get_class($location)!="GameLocation")
+                $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for","os"));
+
+        if(!is_null($location->only_for)) {
+            $pv = null;
+            switch($location->only_for) {
+                case "WindowsXP":
+                    $pv = "XP";
+                    break;
+                case "WindowsVista":
+                    $pv = "Vista";
+                    break;
+                default:
+                    throw new Exception($location->only_for . " not supported");
+            }
+            $this->setAttribute($new_lele,"platform_version",$pv);
+        }
+
+        if($location->deprecated) {
+            $this->setAttribute($new_lele,"read_only","true");
+        }
+
+        array_push($leles,$new_lele);
+        return $leles;
+    }
+                        
     protected function createLocationsElements($locations) {
         if(sizeof($locations)>0) {
             $leles = array();
             foreach($locations as $location) {
-                $new_lele = $this->createElement(self::$loc_types[get_class($location)]);
-    
-                switch(get_class($location)) {
-                    case "GameLocation":
-                        $this->setGameVersionAttributes($new_lele,$location);
-                        break;
-                    case "ShortcutLocation":
-                        if($location->ev!="startmenu")
-                            continue 2;
-                        $this->setAttribute($new_lele,"shortcut",$location->path);
-                        break;
-                    case "PathLocation":
-                        switch($location->ev) {
-                            case "ubisoftsavestorage":
-                            continue 3;
-                        }
-                        if(property_exists($location,"ev")&&!is_null($location->ev)) {
-                            $this->setAttribute($new_lele,"environment_variable",$location->ev);
-                        }
-                        if(property_exists($location,"path")) {
-                            $this->setAttribute($new_lele,"path",$location->path);
-                        }
-                        break;
-                }
-                if(get_class($location)!="GameLocation")
-                        $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for","os"));
-
-                if(!is_null($location->only_for)) {
-                    $pv = null;
-                    switch($location->only_for) {
-                        case "WindowsXP":
-                            $pv = "XP";
-                            break;
-                        case "WindowsVista":
-                            $pv = "Vista";
-                            break;
-                        default:
-                            throw new Exception($location->only_for . " not supported");
-                    }
-                    $this->setAttribute($new_lele,"platform_version",$pv);
-                }
-
-
-                if($location->deprecated) {
-                    $this->setAttribute($new_lele,"read_only","true");
-                }
-                
-                array_push($leles,$new_lele);
+                $leles = $this->createLocationElement($leles,$location);
             }
             return $leles;
         }

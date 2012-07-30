@@ -99,7 +99,7 @@ class APIController {
         echo "You can combine criteria by adding more to the end of the URL, for instance this gets all the PS1 games in the USA region:<br/>";
         linkHere("GameSaveInfo20/PS1/USA/");
         echo "<br/>";
-        echo "You can specify en excluding criteria by placing an exclamation mark before the criteria. This will output only the games that are NOT for Windows:<br/>";
+        echo "You can specify an excluding criteria by placing an exclamation mark before the criteria. This will output only the games that are NOT for Windows:<br/>";
         linkHere("GameSaveInfo20/!Windows/");
         echo "<br/>";
         echo "There are 6 different kind of criteria: game name,  game type, os, platform, media and region.<br/>";

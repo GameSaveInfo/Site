@@ -54,9 +54,30 @@
 <script type="text/javascript" src="libs/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="libs/jquery/jquery-ui-1.8.21.custom.min"></script>
 <script type="text/javascript" src="libs/yoxview/yoxview-init.js"></script>
+<script type="text/javascript">
+function createLink(current, i) {
+    current.attr("id", "subtitle" + i);
+    $("#toc").append("<a id='link" + i + "' href='#subtitle" +
+        i + "' title='" + current.attr("tagName") + "'>" + 
+        current.html() + "</a>");
+    
+}
+
+$(document).ready(function() {
+    $("#toc").append("<h1>Table Of Contents</h1><ol>");
+    $("h2").each(function(i) {
+        createLink($(this),i);
+        $(this).find('h3').each(function(i) {
+            createLink($(this),i);            
+        });
+    });
+    $("#toc").append("</ol>");
+});
+
+</script>
 <style>
 body {
-	font-size:12pt;
+    font-size:12pt;
 }
 div.code, td {
 }
@@ -87,19 +108,17 @@ div.code {
 </head>
 <body>
 
-<h2><a href="http://gamesave.info">Back To Home</a></h2>
+<h1><a href="http://gamesave.info">Back To GameSave.Info</a></h1>
 
 <p>
 Now hold up! You don't have to follow the directions on this page to get games added to GameSave.Info!
 Just use the Analyzer program included with <a href="http://masgau.org/">MASGAU</a> to send me a report on a game (it even has a button to automatically e-mail it for you!), and I'll add it for you! 
-But, if you really want to understand how GameSave.Info sources its game data, feel free to read on!</p>
+But, if you really want to understand how GameSave.Info and MASGAU sources their game data, feel free to read on!</p>
 
-<h2>Table Of Contents</h2><ol>
-<li><a href="#intro">Introduction</a></li>
-</ol>
+<div id="toc"></div>
 
 <ol>
-<h2><li><a name="intro">Introduction</a></li></h2>
+<h2><li>Introduction</li></h2>
 <p>GameSave.Info uses an <a href="https://github.com/GameSaveInfo/Data/blob/master/games.xml">XML file checked into Github</a> to describe where each game keeps its settings and saves. 
 As you may or may not know, an XML file is little more than a specially typed text file, and can be created in programs as simple as notepad. All you do is fire up your favorite text editor and type the correct lines. Here's an excerpt from the games.xml file:</p>
 
@@ -107,28 +126,29 @@ As you may or may not know, an XML file is little more than a specially typed te
 $code = '<game name="DeusEx">
     <title>Deus Ex</title>
     <version os="PS2" region="USA">
-        <title>Deus Ex: The Conspiracy</title>
-        <ps_code prefix="SLUS" suffix="20111"/>
-    <contributor>SanMadJack</contributor>
+      <title>Deus Ex: The Conspiracy</title>
+      <ps_code prefix="SLUS" suffix="20111" type="Saves"/>
+      <contributor>GameSave.Info</contributor>
     </version>
     <version os="Windows">
-        <locations>
-            <path ev="installlocation" path="DeusEx"/>
-            <path ev="installlocation" path="GOG.com\Deus Ex"/>
-            <path ev="steamcommon" path="deus ex"/>
-            <registry root="local_machine" key="SOFTWARE\GOG.com\GOGDEUSX" value="PATH"/>
-            <registry root="local_machine" key="SOFTWARE\Unreal Technology\Installed Apps\Deus Ex" value="Folder"/>
-            <shortcut ev="startmenu" path="Programs\Deus Ex\Play Deus Ex.lnk" detract="System"/>
-            <shortcut ev="startmenu" path="Programs\GOG.com\Deus Ex GOTY\Deus Ex GOTY.lnk" detract="System"/>
-        </locations>
-        <files type="Saves">
-            <save path="Save"/>
-        </files>
-        <files type="Settings">
-            <save path="System" filename="*.ini"/>
-        </files>
-        <identifier path="Save"/>
-        <contributor>SanMadJack</contributor>
+      <locations>
+        <path ev="installlocation" path="DeusEx"/>
+        <path ev="installlocation" path="GOG.com\Deus Ex"/>
+        <path ev="steamcommon" path="deus ex"/>
+        <registry root="local_machine" key="SOFTWARE\GOG.com\GOGDEUSX" value="PATH"/>
+        <registry root="local_machine" key="SOFTWARE\Unreal Technology\Installed Apps\Deus Ex" value="Folder"/>
+        <shortcut ev="startmenu" path="Programs\Deus Ex\Play Deus Ex.lnk" detract="System"/>
+        <shortcut ev="startmenu" path="Programs\GOG.com\Deus Ex GOTY\Deus Ex GOTY.lnk" detract="System"/>
+      </locations>
+      <files type="Saves">
+        <save path="Save"/>
+      </files>
+      <files type="Settings">
+        <save path="System" filename="*.ini"/>
+      </files>
+      <linkable path="Save"/>
+      <identifier path="Save"/>
+      <contributor>GameSave.Info</contributor>
     </version>
     <comment>The best game EVER!</comment>
 </game>';
@@ -149,9 +169,7 @@ formatXml($code);
 
 <p><b>ANOTHER NOTE: There is <a href="https://github.com/GameSaveInfo/Data/blob/master/games.xsd">a schema file on GitHub</a>. If you know what that means, use it.</b></p>
 
-<h2><li>Line-By-Line</li></h2>
-<ol>
-<h3><li>Game Tag</li></h3>
+<h2><li>Game Tag</li></h2>
 
 <?php formatXml('<game name="DeusEx">'); ?>
 
@@ -193,7 +211,7 @@ It's kept only for posterity and backwards-compatability.</p>
 
 <p>Obviously your closing tag should match your opening tag. Other than this, the contained tags are all the same.</p>
 
-<h3><li>Game Title</li></h3>
+<h2><li>Game Title</li></h2>
 <?php formatXml('<title>Deus Ex</title>'); ?>
 <p>Between the two title tags you just type up the name of the game.
 This should be the name that was first attached to a game when it was release, other names would be delegated to version titles, which we will talk about later.
@@ -201,7 +219,7 @@ Try to include the entire name, no reason to skimp on length.
 It might be tempting to shorten <i>Penny Arcade Adventures: On The Rain Slick Precipice Of Darkness Chapter One</i>
 to <i>Penny Arcade Adventures 1</i>, but resist it.</p>
 
-<h3><li>Game Version</li></h3>
+<h2><li>Game Version</li></h2>
 <?php formatXml('<version os="Windows">'); ?>
 
 <p>The version tag is used to specify the versions of the game the contained saves are compatible with.
@@ -211,7 +229,7 @@ only that it's only for the Windows version of the game.
 This save would also be compatible with Linux if you have Deus Ex installed under WINE.
 The reason it is organized like this is because GameSave.Info also doubles as the data source for the game save backup program MASGAU.
 </p>
-<p>There are 5 attributes that allow us to designate a unique game save version:</p>
+<p>There are 5 attributes that allow us to describe a unique game save version:</p>
 <table>
 <tr>
 <th>Attribute -></th>
@@ -285,7 +303,7 @@ If you omit these attributes, then it is saying that the saves described are com
       </files>
       <identifier filename="fs2_open*"/>
       <comment>Doesn\'t have a default install folder, so might require an Alt. Install Path.</comment>
-      <contributor>SanMadJack</contributor>
+      <contributor>GameSave.Info</contributor>
     </version>
   </game>',array(3)); ?>
   
@@ -311,7 +329,7 @@ By adding an additional Mac-specific version we would be declaring such an incom
         <save filename="MW2PRM.CFG"/>
         <save filename="MW2REG.CFG"/>
       </files>
-      <contributor>SanMadJack</contributor>
+      <contributor>GameSave.Info</contributor>
     </version>
     <version os="Windows" release="TitaniumEdition">
       <title>MechWarrior 2: 31st Century Combat: Titanium Edition</title>
@@ -331,7 +349,7 @@ By adding an additional Mac-specific version we would be declaring such an incom
         <save filename="MW2PRM.CFG"/>
         <save filename="MW2REG.CFG"/>
       </files>
-      <contributor>SanMadJack</contributor>
+      <contributor>GameSave.Info</contributor>
     </version>
   </game>',array(3,20)); ?>
   <p>As you can see we only specify a version title when that version has a title different than the main one specified under the game tag.</p>
@@ -356,7 +374,7 @@ It's kept only for posterity and backwards-compatability.</p>
 
 
 
-<h3><li>Locations</li></h3>
+<h2><li>Locations</li></h2>
 <p>Games can keep their saves anywhere, so here we try to provide as many ways as possible of finding them.
 These locations are not the exact locations of the saves, but are instead roots used as the first step to find the saves.
 Why do we do it like this? Here's why:</p>
@@ -474,7 +492,7 @@ From there you provide the path to the shortcut, easy peasy!</p>
         <save filename="optionsx.ini"/>
       </files>
       <identifier filename="optionsx.ini"/>
-      <contributor>SanMadJack</contributor>
+      <contributor>GameSave.Info</contributor>
     </version>
 </expansion>',array(6)); ?>
 <p>If the game shares its save location in any way with another game, we can specify that game as a location source. 
@@ -499,7 +517,7 @@ These version elements MUST match a game version that is in the XML file.
       <files type="Saves">
         <save filename="SAVE?.ITD"/>
       </files>
-      <contributor>SanMadJack</contributor>
+      <contributor>GameSave.Info</contributor>
     </version>
 </game>',array(7)); ?>
 <p>All of the location elements can use the append and detract attributes. In the above example, the shortcut provided actually points to:</p>
@@ -554,7 +572,7 @@ We keep these locations because there may still be saves there, and mark it as d
 </p>
 
 </ol>
-<h3><li>Files</li></h3>
+<h2><li>Files</li></h2>
 
 <p>Now we get to the nitty-gritty of specifying which files are saves, settings, etc. 
 After the locations element's closing tag, we can specify one or more "files" elements, specifying and sorting these files by type.
@@ -614,7 +632,7 @@ This element can use all the same tags as the "save" element, and they all work 
 
 </ol>
 
-<h3><li>Identifier</li></h3>
+<h2><li>Identifier</li></h2>
 <?php formatXml('<identifier path="Save" />'); ?>
 
 <p>Some games aren't consistent about where their saves are. For example Peggle will store its setting in its install folder under XP, but under ProgramData under Vista and 7. 
@@ -628,12 +646,21 @@ It can use the exact same attributes as a "save" element (described above).</p>
 <p>because only the right location will have a userdata folder in it. It would probably be best for every game to have one of these, but the only ones that absolutely need it are ones that can have multiple locations, or if you need to distinguish between two versions of a game (such as with The Longest Journey's 2-disc and 4-disc variants).
 </p>
 
-<h3><li>PlayStation Games</li></h3>
+<h2><li>Linkable</li></h2>
+<?php formatXml('<linkable path="Save"/>'); ?>
+
+<p>Some games can handle having their save folders symlinked to another folder, like inside of a Dropbox or Google Drive folder.
+Do this on two computers, and you've got their saves automatically synced!
+You can specify paths that allow for this using this.
+Individual files are not supported here, as Windows freaks the hell out if you try.
+</p>
+
+<h2><li>PlayStation Games</li></h2>
 <?php formatXml('<game name="BrutalLegend">
     <title>Brütal Legend</title>
     <version os="PS3" region="USA">
         <ps_code prefix="BLUS" suffix="30330" type="Saves"/>
-        <contributor>SanMadJack</contributor>
+        <contributor>GameSave.Info</contributor>
     </version>
 </game>',array(3,4)); ?>
 
@@ -654,24 +681,24 @@ Usually these saves wil have extra letters appended to the name. You can specify
 <p>Usually you would want to accompany an append with an appropriate type.
 Having a code with an append will NOT indicate that it should be excluded from other types, so make sure each code entry will indicate a unique entry.</p>
 
-<h3><li>Contributor</li></h3>
-<?php formatXml('<contributor>SanMadJack</contributor>'); ?>
+<h2><li>Contributor</li></h2>
+<?php formatXml('<contributor>GameSave.Info</contributor>'); ?>
 
 <p>This is used by the site to credit contributors.</p>
 
-<h3><li>Comment</li></h3>
+<h2><li>Comment</li></h2>
 <?php formatXml('<comment>The best game EVER!</comment>'); ?>
 
 <p>Used to specify a comment that will be visible on the game info page. 
 You can have a comment element instide the version and/or inside the game.</p>
 
-<h3><li>Restore Comment</li></h3>
+<h2><li>Restore Comment</li></h2>
 <?php formatXml('<restore_comment>Restoring saves for this game also requires restoring Game for Windows Account Data, which MASGAU automatically backs up in G4WAccountData.</restore_comment>'); ?>
 
 <p>Used to specify a comment pertining to restoring a game's saves.
 Can only be inside of a version element.</p>
 
-<h3><li>Close Tags</li></h3>
+<h2><li>Close Tags</li></h2>
 <?php formatXml('</version>
 </game>'); ?>
 
