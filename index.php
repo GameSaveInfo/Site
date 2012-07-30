@@ -35,11 +35,13 @@ $data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",ar
 
 var site_title = "<?php echo $title; ?>";
 </script>
-<?php
 
-global $test_mode;
 <script type="text/javascript">
   var _gaq = _gaq || [];
+  
+<?php
+  global $test_mode;
+
 if(!$test_mode) {
 echo "
   _gaq.push(['_setAccount', 'UA-32952901-1']);
