@@ -41,6 +41,8 @@ class GameVersion extends AXmlData {
     public $scumm_vm = array();
     public $ps_codes = array();
 
+    public $link_locations = array();
+
     public $file_types = array();
     public $identifiers = array();
         
@@ -105,8 +107,9 @@ class GameVersion extends AXmlData {
         return array(   "locations"=>null,
                         "scumm_vm"=>"ScummVM",
                         "ps_codes"=>"PlayStationCode",
-                        "identifiers"=>"IdentifyingFile",
-                        "file_types"=>"FileType");    
+                        "file_types"=>"FileType",
+                        "link_locations"=>"LinkLocation",
+                        "identifiers"=>"IdentifyingFile");    
     }
     
     protected function getNodes() {
@@ -118,6 +121,7 @@ class GameVersion extends AXmlData {
                         "registry"=>    array("RegistryLocation","registry_locations"),
                         "shortcut"=>    array("ShortcutLocation","shortcut_locations"),
                         "files"=>       array("FileType","file_types"),
+                        "linkable"=>    array("LinkLocation","link_locations"),
                         "identifier"=>  array("IdentifyingFile","identifiers"),
                         "contributor"=> array("string","contributors"));
     }

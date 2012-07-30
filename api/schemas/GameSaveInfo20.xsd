@@ -16,6 +16,7 @@
         <xs:enumeration value="allusersprofile"/>
         <xs:enumeration value="altsavepaths"/>
         <xs:enumeration value="appdata"/>
+        <xs:enumeration value="commonapplicationdata"/>
         <xs:enumeration value="drive"/>
         <xs:enumeration value="flashshared" />
         <xs:enumeration value="installlocation"/>
@@ -80,8 +81,15 @@
 
   <xs:attribute name="deprecated" type="xs:boolean" />
 
-  <xs:attribute name="path" type="xs:string"/>
-  <xs:attribute name="root">
+  <xs:attribute name="path">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" >
+        <xs:pattern value="[^:]*" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+
+    <xs:attribute name="root">
     <xs:simpleType>
       <xs:restriction base="xs:string">
         <xs:enumeration value="classes_root"/>
@@ -322,6 +330,7 @@
       <xs:element ref="comment" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attributeGroup ref="item_attributes"/>
+    <xs:attribute name="submitted" type="xs:boolean" />
   </xs:complexType>
 
   <xs:complexType name="program_sequel">
@@ -340,6 +349,12 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="linkable">
+    <xs:complexType>
+      <xs:attribute ref="path" use="optional" />
+    </xs:complexType>
+  </xs:element>
+  
   <xs:element name="locations">
     <xs:complexType>
       <xs:choice minOccurs="1" maxOccurs="unbounded">
@@ -369,6 +384,7 @@
                 <xs:element ref="files" minOccurs="1" maxOccurs="unbounded" />
               </xs:sequence>
             </xs:choice>
+            <xs:element ref="linkable" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="identifier" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
           <xs:element ref="ps_code" minOccurs="1" maxOccurs="unbounded"/>
@@ -381,13 +397,54 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="system" type="program">
+    <xs:unique name="uniqueSystemVersions">
+      <xs:selector xpath="*" />
+      <xs:field xpath="@os"/>
+      <xs:field xpath="@platform"/>
+      <xs:field xpath="@media"/>
+      <xs:field xpath="@region"/>
+      <xs:field xpath="@release"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="game" type="program_sequel">
+    <xs:unique name="uniqueGameVersions">
+      <xs:selector xpath="*" />
+      <xs:field xpath="@os"/>
+      <xs:field xpath="@platform"/>
+      <xs:field xpath="@media"/>
+      <xs:field xpath="@region"/>
+      <xs:field xpath="@release"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="mod" type="program_expansion">
+    <xs:unique name="uniqueModVersions">
+      <xs:selector xpath="*" />
+      <xs:field xpath="@os"/>
+      <xs:field xpath="@platform"/>
+      <xs:field xpath="@media"/>
+      <xs:field xpath="@region"/>
+      <xs:field xpath="@release"/>
+    </xs:unique>
+  </xs:element>
+  <xs:element name="expansion" type="program_expansion">
+    <xs:unique name="uniqueExpansionVersions">
+      <xs:selector xpath="*" />
+      <xs:field xpath="@os"/>
+      <xs:field xpath="@platform"/>
+      <xs:field xpath="@media"/>
+      <xs:field xpath="@region"/>
+      <xs:field xpath="@release"/>
+    </xs:unique>
+  </xs:element>
+
   <xs:element name="programs">
     <xs:complexType>
       <xs:choice minOccurs="1" maxOccurs="unbounded">
-        <xs:element name="system" minOccurs="0" maxOccurs="unbounded" type="program"/>
-        <xs:element name="game" minOccurs="0" maxOccurs="unbounded" type="program_sequel" />
-        <xs:element name="mod" minOccurs="0" maxOccurs="unbounded" type="program_expansion"/>
-        <xs:element name="expansion" minOccurs="0" maxOccurs="unbounded" type="program_expansion"/>
+        <xs:element ref="system" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="game" minOccurs="0" maxOccurs="unbounded"  />
+        <xs:element ref="mod" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="expansion" minOccurs="0" maxOccurs="unbounded" />
       </xs:choice>
       <xs:attribute name="majorVersion" use="required">
         <xs:simpleType>
@@ -406,6 +463,10 @@
       <xs:attribute ref="date" use="required"/>
       <xs:anyAttribute processContents="skip"/>
     </xs:complexType>
+    <xs:unique name="uniqueNames">
+      <xs:selector xpath="*" />
+      <xs:field xpath="@name"/>
+    </xs:unique>
   </xs:element>
 </xs:schema>
 

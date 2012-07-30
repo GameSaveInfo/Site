@@ -79,6 +79,12 @@ class GameSaveInfo20 extends AXmlExporter {
             $vele->appendChild($fele);
         }
         
+        foreach($version->link_locations as $linkable) {
+            $iele = $this->createElement("linkable");
+            $this->processFields($linkable,$iele,array("game_version"));
+            $vele->appendChild($iele);
+        }
+        
         foreach($version->identifiers as $identifier) {
             $iele = $this->createElement("identifier");
             $this->processFields($identifier,$iele,array("game_version"));
