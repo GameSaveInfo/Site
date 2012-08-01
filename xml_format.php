@@ -695,7 +695,7 @@ You can have a comment element instide the version and/or inside the game.</p>
 <h2><li>Restore Comment</li></h2>
 <?php formatXml('<restore_comment>Restoring saves for this game also requires restoring Game for Windows Account Data, which MASGAU automatically backs up in G4WAccountData.</restore_comment>'); ?>
 
-<p>Used to specify a comment pertining to restoring a game's saves.
+<p>Used to specify a comment pertaining to restoring a game's saves.
 Can only be inside of a version element.</p>
 
 <h2><li>Close Tags</li></h2>

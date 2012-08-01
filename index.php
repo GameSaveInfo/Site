@@ -97,7 +97,7 @@ echo "
 </div>
 
 <div id="credits">
-<?php echo $title ?> is mantained by Matthew Barbour and various <a href="contributors"  class="popup_link">Contributors</a>
+<?php echo $title ?> is mantained by <a href="mailto:sanmadjack@gamesave.info">Matthew Barbour</a> and various <a href="contributors"  class="popup_link">Contributors</a>
 </div>
 
 <div id="menu">
