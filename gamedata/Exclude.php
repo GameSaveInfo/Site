@@ -11,7 +11,7 @@
  * @author TKMAYN9
  */
  include_once 'AFile.php';
-class ExceptFile extends SaveFile {    
+class Exclude extends IncludeFile {    
     public $parent = null;
 
 	function __construct($parent_id, $type_id) {

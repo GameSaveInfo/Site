@@ -64,6 +64,7 @@ XML File Import From Data Branch Of GitHub
 
 ?>
 <br />
+<br /><input type="radio" name="file"  value="new.xml">new.xml</input>
 <br /><input type="radio" name="file"  value="games.xml">games.xml</input>
 <br /><input type="radio" name="file"  value="system.xml">system.xml</input>
 <br /><input type="radio" name="file"  value="deprecated.xml">deprecated.xml</input>

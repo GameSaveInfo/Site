@@ -20,6 +20,10 @@ class Game extends AXmlData {
     public $follows = null;
     public $deprecated = null;
 	public $comment = null;
+
+    public $added;
+    public $updated;
+    
     // Sub-objects
     public $versions = array();
     
@@ -52,6 +56,8 @@ class Game extends AXmlData {
                         "type"=>        array("string", "type", false),
                         "for"=>         array("string", "for", false),
                         "follows"=>     array("string", "follows", false),
+                        "added"=>       array("timestamp", "added", false),
+                        "updated"=>     array("timestamp", "updated", false),
                         "deprecated"=>  array("boolean", "deprecated", false),
                         "comment"=>     array("string", "comment", false ));
     }
@@ -64,10 +70,18 @@ class Game extends AXmlData {
     
     public function loadXml($node) {
         $this->type = $node->localName;
+        
         parent::loadXml($node);
+        
+        if(is_null($this->added)) {
+            $this->added = self::formatDate(null);
+        }
+        if(is_null($this->updated)) {
+            $this->updated = self::formatDate(null);
+        }
     }    
     
-    protected function loadSubNode($node) {
+    protected function loadSubNode($node, $subs = null) {
         $name = $node->localName;
         if($name=='version') {
             require_once 'GameVersion.php';

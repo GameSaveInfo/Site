@@ -10,12 +10,13 @@
  *
  * @author TKMAYN9
  */
- include_once 'AFile.php';
-class SaveFile extends AFile {
+include_once 'AFile.php';
+
+class IncludeFile extends AFile {
     public $type = null;
     
     public $modified_after = null;
-	public $excepts = array();
+	public $exclusions = array();
 
 	public static $table_name = "game_files";
 
@@ -44,7 +45,7 @@ class SaveFile extends AFile {
                     "modified_after"=>array("string",'modified_after',true));
     }
     protected function getSubObjects() {
-        return array("excepts"=>"ExceptFile");    
+        return array("exclusions"=>"Exclude");    
     }
     protected function getNodes() {}
 
@@ -61,13 +62,13 @@ class SaveFile extends AFile {
         }
     }
 
-    protected function loadSubNode($node) {
+    protected function loadSubNode($node, $subs = null) {
         $name = $node->localName;
-        if($name=='except') {
-            include_once 'ExceptFile.php';
-            $except = new ExceptFile($this->getId(), $this->type);
+        if($name=='exclude') {
+            include_once 'Exclude.php';
+            $except = new Exclude($this->getId(), $this->type);
     		$except->loadXml($node);
-    		array_push($this->excepts,$except);
+    		array_push($this->exclusions,$except);
             return $except;
         } else {
             parent::loadSubNode($node);

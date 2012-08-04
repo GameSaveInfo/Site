@@ -260,7 +260,7 @@ foreach ($game_data->versions as $version) {
 
     foreach($version->file_types as $file) {
         if(!array_key_exists($file->name,$file_types)) {
-            $file_types[$file->name] = $file->files;   
+            $file_types[$file->name] = $file->inclusions;   
         }
     }
 

@@ -116,6 +116,9 @@ abstract class AXmlExporter extends AExporter {
                         case "integer":
                             $this->setAttribute($element,$key,$value);
                             break;
+                        case "timestamp":
+                            $this->setAttribute($element,$key,self::formatDate($value));                            
+                            break;
                         default:
                             throw new Exception($type." NOT KNOWN");
                     }

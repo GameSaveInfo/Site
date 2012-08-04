@@ -24,6 +24,8 @@ class GameLocation extends Location {
             $name = $field[1];
             if($this->$name != null)
                $criteria[$name] = $this->$name;
+            else
+               $criteria[$name] = null;
         }
         return $criteria;
     }

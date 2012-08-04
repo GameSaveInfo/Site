@@ -11,13 +11,13 @@
  * @author TKMAYN9
  */
  include_once 'AXmlData.php';
-include_once 'IncludeFile.php';
-class FileType extends AXmlData {
-    public $name;
-	public $inclusions = array();
+include_once 'RegistryEntry.php';
+class RegistryType extends AXmlData {
+    public $type;
+	public $entries = array();
     public $game_version;
 
-	public static $table_name = "game_file_types";
+	public static $table_name = "game_registry_types";
 
 	function __construct($parent_id) {
 		parent::__construct(self::$table_name,$parent_id);
@@ -29,13 +29,13 @@ class FileType extends AXmlData {
     }
     public function getFields() {
         return array("game_version"=>array("string","game_version",true),
-                    "type"=>array("string","name",true));    
+                    "type"=>array("string","type",true));    
     }
     protected function getSubObjects() {
-        return array("inclusions"=>"IncludeFile");
+        return array("entries"=>"RegistryEntry");
     }
     protected function getNodes() {
-        return array("include"=>array("IncludeFile","inclusions"));
+        return array("entry"=>array("RegistryEntry","entries"));
     }
     public function getRowsFor($id,$db) {
         return $db->Select(self::$table_name,null,array("game_version"=>$id),$this->generateOrder());

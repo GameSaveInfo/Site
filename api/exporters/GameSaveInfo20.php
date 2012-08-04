@@ -66,14 +66,25 @@ class GameSaveInfo20 extends AXmlExporter {
         foreach($version->file_types as $file_type) {
             $fele = $this->createElement("files");
             $this->processFields($file_type,$fele,array("game_version"));
-            foreach($file_type->files as $file) {
-                $sele = $this->createElement("save");
+            foreach($file_type->inclusions as $file) {
+                $sele = $this->createElement("include");
                 $this->processFields($file,$sele,array("type"));
-                foreach($file->excepts as $except) {
-                    $eele = $this->createElement("except");
+                foreach($file->exclusions as $except) {
+                    $eele = $this->createElement("exclude");
                     $this->processFields($except,$eele,array("type","parent"));
                     $sele->appendChild($eele);
                 }
+                $fele->appendChild($sele);
+            }
+            $vele->appendChild($fele);
+        }
+        
+        foreach($version->registry_types as $reg_type) {
+            $fele = $this->createElement("registry");
+            $this->processFields($reg_type,$fele,array("game_version"));
+            foreach($reg_type->entries as $entry) {
+                $sele = $this->createElement("entry");
+                $this->processFields($entry,$sele,array("type"));
                 $fele->appendChild($sele);
             }
             $vele->appendChild($fele);

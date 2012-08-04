@@ -45,7 +45,9 @@ class GameVersion extends AXmlData {
 
     public $file_types = array();
     public $identifiers = array();
-        
+
+    public $registry_types = array();
+
     public $contributors = array();
 
 	public static $table_name = "game_versions";
@@ -108,6 +110,7 @@ class GameVersion extends AXmlData {
                         "scumm_vm"=>"ScummVM",
                         "ps_codes"=>"PlayStationCode",
                         "file_types"=>"FileType",
+                        "registry_types"=>"RegistryType",
                         "link_locations"=>"LinkLocation",
                         "identifiers"=>"IdentifyingFile");    
     }
@@ -115,11 +118,12 @@ class GameVersion extends AXmlData {
     protected function getNodes() {
         return array(   "scummvm"=>     array("ScummVM","scumm_vm"),
                         "ps_code"=>     array("PlayStationCode","ps_codes"),
-                        "locations"=>   array("collection","locations"),
-                        "path"=>        array("PathLocation","path_locations"),
-                        "parent"=>      array("GameLocation","game_locations"),
-                        "registry"=>    array("RegistryLocation","registry_locations"),
-                        "shortcut"=>    array("ShortcutLocation","shortcut_locations"),
+                        "locations"=>   array("collection","locations",array(
+                            "path"=>        array("PathLocation","path_locations"),
+                            "parent"=>      array("GameLocation","game_locations"),
+                            "registry"=>    array("RegistryLocation","registry_locations"),
+                            "shortcut"=>    array("ShortcutLocation","shortcut_locations"))),
+                        "registry"=>    array("RegistryType","registry_types"),
                         "files"=>       array("FileType","file_types"),
                         "linkable"=>    array("LinkLocation","link_locations"),
                         "identifier"=>  array("IdentifyingFile","identifiers"),

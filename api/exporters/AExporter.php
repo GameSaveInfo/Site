@@ -1,5 +1,5 @@
 <?php
-
+ob_start("ob_gzhandler");
 abstract class AExporter {
     public $error_occured = false;
     
@@ -8,8 +8,6 @@ abstract class AExporter {
     }
 
     public static $date_format = 'Y-m-d\TH:i:s';
-    
-        
     public static function formatDate($string) {
         date_default_timezone_set("UTC");
         return date_format(new DateTime($string), self::$date_format);

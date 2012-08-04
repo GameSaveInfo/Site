@@ -106,7 +106,8 @@ echo "
 <a href="/api/">API</a> - 
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
-<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a>
+<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
+<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a>
 </div>
 
 <div id="adding_games" class="popup">

@@ -32,6 +32,7 @@ abstract class AXmlData {
             }        
         }
     }
+    
     public static $date_format = 'Y-m-d\TH:i:s';
     public static function formatDate($string) {
         date_default_timezone_set("UTC");
@@ -143,6 +144,10 @@ abstract class AXmlData {
                 case "integer":
                     $this->$field = intval($value);
                     break;
+                case "timestamp":
+                    if($value!=null)
+                        $this->$field = self::formatDate($value);
+                    break;
                 default:
                     throw new Exception($type." not supported in " .get_class($this));
             }
@@ -150,8 +155,10 @@ abstract class AXmlData {
             throw new Exception($name . ' not supported in '. get_class($this));
         }
     }
-    protected function loadSubNode($node) {
-        $subs = $this->getNodes();
+    protected function loadSubNode($node, $subs = null) {
+        if(is_null($subs))
+            $subs = $this->getNodes();
+            
         $name = $node->localName;
         if($name=='')
             return;
@@ -162,13 +169,15 @@ abstract class AXmlData {
             switch($class) {
                 case "collection":
                     foreach ($node->childNodes as $child) {
-                        $item = $this->loadSubNode($child);
+                        $item = $this->loadSubNode($child,$subs[$name][2]);
                         if($item==null)
                             continue;
+                            
                         if($prop!=null)
-                            array_push($this->$prop,$this->loadSubNode($child));
-                        else
-                            $this->loadSubNode($child);
+                            array_push($this->$prop,$this->loadSubNode($child,$subs[$name][2]));
+                        else {                    
+                            $this->loadSubNode($child,$subs[$name][2]);
+                        }
                     }
                     break;
                 case "string":
