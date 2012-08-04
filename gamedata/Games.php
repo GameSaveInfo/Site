@@ -34,7 +34,7 @@ class Games {
         $return = array("numeric"=>0);
         foreach($letters as $letter) {
             if(!is_numeric($letter->letter)) {
-                $return[$letter->letter] = $letter->count;
+                $return[strtoupper($letter->letter)] = $letter->count;
             } else {
                 $return["numeric"] += $letter->count;                
             }
@@ -60,6 +60,10 @@ class Games {
             $count += $row->count;
             $i++;
         }
+
+//        $data = $db->RunStatement("SELECT COUNT(*) AS count, type FROM game_versions ver LEFT JOIN games gam ON ver.name = gam.name ".
+  //                                  "WHERE ".self::$game_criteria); 
+        
         $count_string = '';
         if ($count > 0) {
             for ($i = 0; $i < sizeof($game_counts); $i++) {
@@ -73,6 +77,7 @@ class Games {
             if (sizeof($game_counts) > 1) {
                 $count_string .= ' (' . number_format($count) . ' total)';
             }
+         //   $count_string .= ' and '.$data[0]->count;
         } else {
             $count_string = "no games (for now)";
         }

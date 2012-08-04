@@ -19,32 +19,32 @@ function listFormatter($list) {
     return $string;
 }
 
-function printCommonPathAttributes($location) {
-	
-	echo '<ul>';
+function getCommonPathAttributes($location) {
+	$output = '<ul>';
     if (get_class($location) != "PathLocation") {
     	if($location->detract!=null || $location->append !=null ) {	
-    		echo "<li>BUT you have to";
+    		$output .= "<li>BUT you have to";
     
             if ($location->detract != null) {
-                echo ' detract "' . $location->detract . '" from the path';
+                $output .= ' detract "' . $location->detract . '" from the path';
         		if($location->append!=null) {
-        			echo ' AND THEN';
+        			$output .= ' AND THEN';
     	    	}	
     		}
     		if ($location->append != null)
-                    echo ' append "' . $location->append. '"';
+                    $output .= ' append "' . $location->append. '"';
     		if($location->detract == null )
-    		    echo ' to the path';
-        	echo '</li>';
+    		    $output .= ' to the path';
+        	$output .= '</li>';
     	}
 	}
     if ($location->only_for != null)
-        echo '<li>But it only works on ' . $location->only_for . '</li>';
+        $output .= '<li>But it only works on ' . $location->only_for . '</li>';
 
     if ($location->deprecated)
-        echo '<li>This location is no longer used by the game, but at one time it was!</li>';
-	echo '</ul>';    
+        $output .= '<li>This location is no longer used by the game, but at one time it was!</li>';
+	$output .= '</ul>';    
+    return $output;
 }
 
 function printFiles($files) {
@@ -69,8 +69,8 @@ function printFiles($files) {
     }
 }
 
-function printEv($name,$db) {
-    echo '<div class="has_tooltip ev_name">' . $name . '<div class="tooltip">'.Location::getEvDescription($name,$db).'</div></div>';
+function getEvDescription($name,$db) {
+    return '<div class="has_tooltip ev_name">' . $name . '<div class="tooltip">'.Location::getEvDescription($name,$db).'</div></div>';
 }
 
 function exportFiles($files) {
@@ -297,21 +297,96 @@ if($locations_found) {
     echo '<h2>PC Saves</h2>';
     echo '<div class="locations">';
     if(sizeof($path_locations)>0) {
-        echo '<details open="open"><summary>Saves can be found in ';
-        if(sizeof($path_locations)>0)
-            echo 'this location';
-        else
-            echo 'these locations';
-        echo ':</summary>';
-        echo '<ul>';
+        $install_output = "";
+        $other_output = "";
+        $steam_cloud_output = "";
+        $uplay_output = "";
+        $install_count = 0;
+        $other_count = 0;
+        $steam_cloud_count = 0;
+        $uplay_count = 0;
         foreach ($path_locations as $location) {
-            echo '<li>';
-            printEv($location->ev,$db); 
-            echo '\\' . $location->path;
-            printCommonPathAttributes($location);
-            echo '</li>';
+            $output = '<li>';
+            $output .= getEvDescription($location->ev,$db); 
+            $output .= '\\' . $location->path;
+            $output .= getCommonPathAttributes($location);
+            $output .= '</li>';
+            
+            switch($location->ev) {
+                case "installlocation":
+                case "steamcommon":
+                    $install_output .= $output;
+                    $install_count++;
+                    break;
+                case "steamuserdata":
+                    $steam_cloud_output .= $output;
+                    $steam_cloud_count++;
+                    break;
+                case "ubisoftsavestorage":
+                    $uplay_output .= $output;
+                    $uplay_count++;
+                    break;
+                default:
+                    $other_output .= $output;
+                    $other_count++;
+                    break;
+            }
         }
-        echo '</ul></details>';
+        if($install_output!="") {
+            echo 'Saves can be found in the install folder, ';
+            if($install_count==1)
+                echo 'an example of which is';
+            else
+                echo 'some examples of which are';
+            echo ':<ul>';
+            echo $install_output;
+            echo '</ul>';
+        }
+        if($other_output!="") {
+            echo 'Saves can ';
+            if($install_output!="")
+                echo 'also ';
+            echo 'be found in ';
+            if($other_count==1)
+                echo 'this location';
+            else
+                echo 'these locations';
+            echo ':<ul>';
+            echo $other_output;
+            echo '</ul>';
+
+        }
+        if($steam_cloud_output!="") {
+            echo 'This game ';
+            if($install_output!=""||$other_output!="")
+                echo 'also ';
+            echo 'uses Steam Cloud, and puts its cloud data in ';
+            if($steam_cloud_count==1)
+                echo 'this location';
+            else
+                echo 'these locations';
+            echo ':<ul>';
+            echo $steam_cloud_output;
+            echo '</ul>';
+
+        }
+        if($uplay_output!="") {
+            echo 'This game ';
+            if($install_output!=""||$other_output!="")
+                echo 'also ';
+            echo 'uses UPlay\'s cloud sync, and puts its data in ';
+            if($uplay_count==1)
+                echo 'this location';
+            else
+                echo 'these locations';
+            echo ':<ul>';
+            echo $uplay_output;
+            echo '</ul>';
+
+        }
+        
+    } else if (sizeof($registry_locations) > 0) {
+        echo 'Saves can be found in the install folder, which we unfortunately don\'t have any examples of';
     }
     if (sizeof($registry_locations) > 0) {
         echo '<details><summary>';
@@ -319,7 +394,7 @@ if($locations_found) {
             echo 'This registry entry usually points';
         else
             echo 'These registry entries usually point';
-        echo ' to where the game keeps its saves:</summary>';
+        echo ' to the game\'s install folder:</summary>';
         echo '<ul>';
         foreach ($registry_locations as $location) {
             echo '<li>' . strtoupper($location->root) . '\\' . $location->key.'\\';
@@ -327,7 +402,7 @@ if($locations_found) {
                 echo '(Default)';
             else
                 echo $location->value;
-            printCommonPathAttributes($location);
+            getCommonPathAttributes($location);
             echo '</tr>';
         }
         echo '</ul></details>';
@@ -338,13 +413,13 @@ if($locations_found) {
             echo 'This shortcut usually points';
         else
             echo 'These shortcuts usually point';
-        echo ' to where the game keeps its saves:</summary>';
+        echo ' to the game\'s install folder:</summary>';
         echo '<ul>';
         foreach ($shortcut_locations as $location) {
             echo '<li>';
-            printEv($location->ev,$db);
+            getEvDescription($location->ev,$db);
             echo '\\' . $location->path;
-            printCommonPathAttributes($location);
+            getCommonPathAttributes($location);
             echo '</li>';
         }
         echo '</ul></details>';
