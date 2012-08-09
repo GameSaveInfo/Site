@@ -1,6 +1,6 @@
 <?php
 abstract class AXmlData {
-    protected abstract function getId();
+    public abstract function getId();
     public abstract function getFields();
     protected abstract function getSubObjects();
     protected abstract function getNodes();
@@ -8,6 +8,7 @@ abstract class AXmlData {
     protected $parent_id = null;
     protected $table;
     
+        public $written = false;
     
     function __construct($table,$parent_id) {
     	$this->table = $table;
@@ -34,7 +35,7 @@ abstract class AXmlData {
     }
     
     public static $date_format = 'Y-m-d\TH:i:s';
-    public static function formatDate($string) {
+    public static function formatDate($string = null) {
         date_default_timezone_set("UTC");
         return date_format(new DateTime($string), self::$date_format);
     }
@@ -61,7 +62,10 @@ abstract class AXmlData {
     }
 
     
-    protected static function writeDataToDb($source, $table, $fields, $sub_objects, $con, $message = null) {
+    protected static function writeDataToDb($source, $table, $fields, $con, $message) {
+        if(is_null($con))
+            throw new Exception("Null connection object, WTF?!");
+
         $insert = array();
         foreach(array_keys($fields) as $key) {
             if(is_numeric($key))
@@ -74,27 +78,37 @@ abstract class AXmlData {
         
         $id = $source->getId();
         if($id!=null) {
-            $insert['id'] = $id;
+            $insert['id'] = $id;            
         }
         
         $con->Insert($table, $insert, $message); 
-        
+        return true;
+    }
+
+    
+    protected static function writeSubDataToDb($source, $sub_objects, $con) {
+        $rv = false;
         if($sub_objects!=null) {
+            if(is_null($con))
+                throw new Exception("Null connection object, WTF?!");
+
             foreach(array_keys($sub_objects) as $sub_object) {
                 if(is_numeric($sub_object))
                     continue;
                 $objects = $source->$sub_object;
                 foreach($objects as $object) {
                     if(is_object($object)) {
-                        $object->newWriteToDb($con);   
+                        if($object->newWriteToDb($con))
+                            $rv = true;
                     } else {
                         throw new Exception($sub_object. ' is not an object ');
                     }
                 }
             }
-        }        
+        } 
+        return $rv;
     }
-
+        
     protected static function combine($one, $two) {
         if(is_object($one)&&is_object($two)) {
             $obj = new stdClass();
@@ -112,11 +126,70 @@ abstract class AXmlData {
             return $one;
         }
     }
-
-    public function newWriteToDb($con) {
-        self::writeDataToDb($this, $this->table,$this->getFields(),$this->getSubObjects(),$con, 'Writing '.get_class($this).' to database');
+    
+    protected function getDescription() {
+        return get_class($this);
     }
+    protected function existsInDb($con) {
+        $id = $this->getId();
+        if($id!=null) {
+            $data = $con->Select($this->table,"count(*) as count",array("id"=>$id),null);
+            $data = $data[0];
+            if($data->count>0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public $was_merged = false;
+    
+    public function newWriteToDb($con, $recursenomatterwhat = false) {
+        $rv = true;
+        if($this->written) {
+            echo '<details>';
+            echo '<summary style="color:green">'.$this->getDescription();
+            echo ' (ALREADY WRITTEN, SKIPPING)</summary>';
+            echo '</details>';
+            return false;
+        }
+        if($this->existsInDb($con)) {
+            if($recursenomatterwhat) {
+                echo '<details open="true">';
+                echo '<summary style="color:blue">'.$this->getDescription();
+                echo ' (EXISTS, MERGING)</summary>';
+                $rv = $this->writeSubToDb($con);
+                $was_merged = $rv;
+            } else {
+                echo '<details open="false">';
+                echo '<summary style="color:red">'.$this->getDescription().' (EXISTS, SKIPPING)</summary></details>';
+                return false;
+            }
+        } else {
+            echo '<details open="true">';
+            echo '<summary style="color:orange">'.$this->getDescription();
+            echo ' (ADDING)</summary>';
+            $rv = $this->writeToDb($con);            
+        }
+        echo '</details>';            
 
+        return $rv;
+                    
+    }
+    public function writeToDb($con) {
+        if(self::writeDataToDb($this, $this->table, $this->getFields(), $con, 'Writing '.get_class($this).' to database')) {
+            $this->writeSubToDb($con);
+            return true;
+        }
+        return false;        
+    }    
+    
+    public function writeSubToDb($con) {
+        
+        $rv = self::writeSubDataToDb($this, $this->getSubObjects(), $con);
+                $this->written = true; // Yay!
+        return $rv;
+    }
 
     function loadXml($node) {
         foreach ($node->attributes as $attribute) {

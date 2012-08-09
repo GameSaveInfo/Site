@@ -17,7 +17,6 @@ abstract class AExporter {
         return $this->doExport();
     }
 
-
     protected abstract function doExport();
 }
 

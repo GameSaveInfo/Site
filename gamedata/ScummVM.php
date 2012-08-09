@@ -10,7 +10,7 @@ class ScummVM extends AXmlData {
 		parent::__construct(self::$table_name,$parent_id);
         $this->game_version = $parent_id;
 	} 
-    protected function getId() {}
+    public function getId() {}
     public function getFields() {
         return array("game_version"=>array("string","game_version",true),
                     "name"=>array("string","name",true));

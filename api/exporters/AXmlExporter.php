@@ -1,27 +1,28 @@
 <?php
 require_once 'AExporter.php';
 abstract class AXmlExporter extends AExporter {
-    private $xml;
-    private $root;
-    private $schema = null;
+    protected $xml;
+    protected $root;
+    protected $schema = null;
     
     public static $content_type = "text/xml";
+    protected $updated;
     
-    public function __construct($schema = null, $comment = null, $date = null) {
+    public function __construct($schema = null, $comment = null, $updated = null) {
         parent::__construct();
         $this->xml = new DOMDocument();
         $this->xml->encoding = 'UTF-8';
         $this->xml->formatOutput = true;
         
+        $this->updated = $updated;
+        
         $this->root = $this->createRootElement();
-        $this->setAttribute($this->root,"xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
         if($schema!=null) {
+            $this->setAttribute($this->root,"xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
             $this->schema = $schema;
             $this->setAttribute($this->root,"xsi:noNamespaceSchemaLocation",$schema);   
         }
         date_default_timezone_set("UTC");
-        $this->root->appendChild($this->xml->createAttribute("date"))->
-                appendChild($this->xml->createTextNode(self::formatDate($date)));
 
         $this->xml->appendChild($this->root);
         
@@ -30,6 +31,11 @@ abstract class AXmlExporter extends AExporter {
             $this->root->appendChild($comment);
         }
         
+        $this->createGameElements($this->root);
+    }
+    
+    
+    protected function createGameElements($root) {
         foreach(Games::$games as $game) {
             if(sizeof($game->versions)==0)
                 continue;
@@ -40,12 +46,13 @@ abstract class AXmlExporter extends AExporter {
             
             if(is_array($game_element)) {
                 foreach($game_element as $g) {
-                    $this->root->appendChild($g);
+                    $root->appendChild($g);
                 }
             } else {
-                $this->root->appendChild($game_element);
+                $root->appendChild($game_element);
             }
         }
+        
     }
     
     public function doExport() {
@@ -57,19 +64,17 @@ abstract class AXmlExporter extends AExporter {
         $document->loadXML($text);
         
 
-        if($this->schema!=null) {
-            $folder =  dirname(__FILE__);
-            $schema = $folder . '/../schemas/' . get_class($this).'.xsd';
-            
-            if (!file_exists($schema)) {
-                throw new Exception("Can't find schema file ".$schema);
-            }
-            
-            if (!$document->schemaValidate($schema)) {
-                echo $text;
-                $this->error_occured = true;
-                throw new Exception("XML DID NOT PASS VALIDATION: " . $schema);
-            }
+        $folder =  dirname(__FILE__);
+        $schema = $folder . '/../schemas/' . get_class($this).'.xsd';
+        
+        if (!file_exists($schema)) {
+            throw new Exception("Can't find schema file ".$schema);
+        }
+        
+        if (!$document->schemaValidate($schema)) {
+            echo $text;
+            $this->error_occured = true;
+            throw new Exception("XML DID NOT PASS VALIDATION: " . $schema);
         }
 
         return $text;
@@ -78,6 +83,10 @@ abstract class AXmlExporter extends AExporter {
     protected function createElement($name, $content = null) {
         if ($content == null) {
             return $this->xml->createElement($name);
+        } else if($content =="") {
+            $ele = $this->xml->createElement($name);
+            $ele->appendChild($this->xml->createTextNode(''));
+            return $ele;
         } else {
             return $this->xml->createElement($name, self::cleanUp($content));
         }

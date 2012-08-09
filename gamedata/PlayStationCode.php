@@ -41,7 +41,7 @@ class PlayStationCode extends AXmlData {
     }
 
 
-    protected function getId() {}
+    public function getId() {}
     public function getFields() {
         return array("game_version"=>array("string","game_version",true),
                     "prefix"=>array("string","prefix",true), 

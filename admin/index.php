@@ -51,10 +51,20 @@ $(document).ready(function() {
 <body style="background-color:black;color:white;">
 <div style="width:50%;float:left;">
 
-XML File Import From Data Branch Of GitHub
+
+<?php
+
+        global $test_mode;
+        if($test_mode)
+            $branch = "master/";
+        else
+            $branch = "update/";        
+
+    echo 'XML File Import From '.$branch.' Branch Of GitHub';
+?>
 <form enctype="multipart/form-data" method="post">
 <input type="hidden" name="action" value="upload" />
-<input name='overwrite' type='checkbox' />Overwrite Existing
+<!--<input name='overwrite' type='checkbox' />Overwrite Existing-->
 <?php
 //    $data = AXmlData::RunQuery("SELECT * FROM ".$db.".xml_files ORDER BY name ASC",$con);
 //    while ($row = mysql_fetch_assoc($data)) {
@@ -64,10 +74,32 @@ XML File Import From Data Branch Of GitHub
 
 ?>
 <br />
-<br /><input type="radio" name="file"  value="new.xml">new.xml</input>
-<br /><input type="radio" name="file"  value="games.xml">games.xml</input>
-<br /><input type="radio" name="file"  value="system.xml">system.xml</input>
-<br /><input type="radio" name="file"  value="deprecated.xml">deprecated.xml</input>
+<select name="file" id="file">
+
+<?php
+$files = array("system.xml","deprecated.xml","games.xml","new.xml","numeric.xml");
+$alphas = range('a', 'z');
+
+foreach($alphas as $alpha) {
+    array_push($files, $alpha.".xml");
+}
+$cur_file = null;
+if(isset($_POST['file'])) {
+    $cur_file = $_POST['file'];
+}
+$select_next = false;
+foreach($files as $file) {
+    if($select_next)
+        echo '<option value="'.$file.'" selected="true">' . $file . '</option>';
+    else
+        echo '<option value="'.$file.'">' . $file . '</option>';
+        
+    $select_next = $file==$cur_file;
+}
+?>
+<option>ALL XML FILES</option>
+
+</select><br />
 <input type="submit" value="IMPORT IT!" />
 </form>
 DECLARE AN UPDATE! CHANGELOG:<br/>
@@ -111,8 +143,10 @@ Erase game
     
     if(isset($_POST['file'])) {
         $file = $_POST['file'];
-        $base_url = "https://raw.github.com/GameSaveInfo/Data/master/";
-        $schema_url = $base_url.'games.xsd';
+
+        
+        $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
+        $schema_url = $base_url.'GameSaveInfo20.xsd';
         
         echo "<details open='true' style='clear:both;'><summary>".$file."</summary>";
         $url = $base_url.$file;

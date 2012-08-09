@@ -37,7 +37,7 @@ class IncludeFile extends AFile {
         }
     }
 
-    protected function getId() {
+    public function getId() {
         return $this->generateHash();
     }
     protected function getSubFields() {

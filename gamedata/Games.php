@@ -13,8 +13,10 @@ class Games {
     private static $document;
     public static $games = array();
 
-
-
+    public static $timestamp;
+    function __construct() {
+    }
+    
     private static $game_criteria = "type NOT IN ('system') AND deprecated = 0";
 
     public static function getGamesForLetter($letter,$db) {
@@ -117,6 +119,9 @@ class Games {
     }
 
     public static function loadFromXml($xml_file,$schema) {
+        include_once 'AXmlData.php';
+        self::$timestamp = AXmlData::formatDate();        
+        echo "Current timestamp: ".self::$timestamp."<br/>";
         echo 'Loading From XMl File: '.$xml_file;
         self::$document = new DOMDocument();
         self::$document->load($xml_file);
@@ -180,6 +185,16 @@ class Games {
     
     private static $replacing = false;
     
+    public static function getGameVersion($name,$hash,$link) {
+        $game = self::getGame($name,$link);
+        foreach($game->versions as $version) {
+            if($version->getId()==$hash) {
+                return $version;
+            }
+        }
+        throw new Exception($hash." not found");
+    }
+    
     public static function getGame($name,$link) {
         if(!array_key_exists($name,self::$games)) {
             $result = $link->Select('games',null,array("name"=>$name),null);
@@ -200,39 +215,14 @@ class Games {
     
     public static function writeGameToDb($name, $link) {
         $game = self::getGame($name,$link);
-        
-        if($game->written) {
-                echo '<details>';
-                echo '<summary style="color:green">'.$game->title.' ('.$game->name.') (';
-                echo 'ALREADY WRITTEN, SKIPPING)</summary>';
-                echo '</details>';
-                return;
-        }
-        
-        $data = $link->Select("games",null,array("name"=>$name),null);      
-        if(sizeof($data)>0) {
-            if(self::$replacing) {
-                echo '<details open="true">';
-                echo '<summary style="color:red">'.$game->title.' ('.$game->name.') ';
-                echo '(EXISTS, REPLACING)</summary>';
                 
-                $link->Delete("games",array("name"=>$game->name),"Deleting Existing Entry");
-            	$game->newWriteToDb($link);
-            } else {
-                echo '<details>';
-                echo '<summary style="color:green">'.$game->title.' ('.$game->name.') (';
-                echo 'EXISTS, SKIPPING)</summary>';
-            }
-        } else {
-            echo '<details open="true">';
-            echo '<summary style="color:orange">'.$game->title.' ('.$game->name.') ';
-            echo '('.$game->type.') ';
-            echo '(ADDING)</summary>';
-    		$game->newWriteToDb($link);
-        }
-        echo '</details>';
+    	if($game->newWriteToDb($link,true)) {
+            if($game->was_merged)
+                $game->updateTime($link);
+    	}
+        echo '<hr/>';
+            
     }
-    
     public static function writeToDb($con,$replace = false) {
         self::$replacing = $replace;
         foreach (self::$games as $game) {

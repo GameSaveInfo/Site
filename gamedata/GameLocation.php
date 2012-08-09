@@ -11,6 +11,8 @@ class GameLocation extends Location {
     public $release = null;
     //public $episode = null;
         
+    public $version;
+        
     public $parent_game_version = null;
     
 	public static $table_name = "game_location_parents";
@@ -31,12 +33,11 @@ class GameLocation extends Location {
     }
     
     private function getParentGame($db,$criteria,$message = null) {
-        
         $result = $db->Select(GameVersion::$table_name,null,$criteria,null,$message);
         if(sizeof($result)!=1)
             throw new Exception("BAD NUMBER OF PARENT CANDIDATES, NEEDS TO BE ONE, GOT ".sizeof($result));
         $row = $result[0];
-        $this->parent_game_version = $row->id;
+        $this->parent_game_version = $row->id;        
         return $row;
         
     }
@@ -68,20 +69,41 @@ class GameLocation extends Location {
     
     public function loadFromDb($id, $row, $con) {
         $parent = $this->getParentGame($con,array('id'=>$row->parent_game_version));
+        
+        
+        foreach(GameVersion::$id_fields as $field) {                
+            $this->$field = $parent->$field;
+        }
+        
+        
+        $this->version = Games::getGameVersion($this->name,$this->parent_game_version,$con);
+
                
         $row =  self::combine($parent,$row);
                 
         parent::loadFromDb($id, $row,$con);
-             
     }
 
     
-    public function newWriteToDb($con) {
+    
+    
+    
+    public function writeToDb($con) {
         $this->setGameId($con);
-        self::writeDataToDb($this,$this->loc_table,self::$loc_fields,null,$con, 'Writing Common Location information');
+        self::writeDataToDb($this,$this->loc_table,self::$loc_fields,$con, 'Writing Common Location information');
         self::writeDataToDb($this, $this->table,array(
             "parent_game_version"=>array("string","parent_game_version")),
-        null,$con, 'Writing '.get_class($this).' to database');        
+        $con, 'Writing '.get_class($this).' to database');        
+    }
+
+
+    public function getAdjustedParentLocations() {
+        $locs = array();
+        foreach($this->version->locations as $loc) {
+            array_push($locs,$loc->ajdustLocation($this));
+        }
+        
+        return $locs;
     }
 
 }

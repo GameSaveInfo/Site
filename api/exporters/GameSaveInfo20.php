@@ -3,12 +3,15 @@ require_once 'AXmlExporter.php';
 class GameSaveInfo20 extends AXmlExporter {
 
     public function __construct($comment = null, $time = null) {
-        parent::__construct("games.xsd",$comment,$time);
+        parent::__construct("GameSaveInfo20.xsd",$comment,$time);
     }
+    
+    
     protected function createRootElement() {
         $root = $this->createElement("programs");
         $this->setAttribute($root,"majorVersion","2");
         $this->setAttribute($root,"minorVersion","0");
+        $this->setAttribute($root,"updated",self::formatDate($this->updated));        
         return $root;
     }
 

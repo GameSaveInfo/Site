@@ -23,7 +23,7 @@ class LinkLocation extends AXmlData {
         $this->game_version = $parent_id;
     }
     
-    protected function getId() {
+    public function getId() {
     }
     
     public function getFields() {

@@ -127,7 +127,7 @@ $code = '<game name="DeusEx">
     <title>Deus Ex</title>
     <version os="PS2" region="USA">
       <title>Deus Ex: The Conspiracy</title>
-      <ps_code prefix="SLUS" suffix="20111" type="Saves"/>
+      <ps_code prefix="SLUS" suffix="20111"/>
       <contributor>GameSave.Info</contributor>
     </version>
     <version os="Windows">
@@ -140,11 +140,11 @@ $code = '<game name="DeusEx">
         <shortcut ev="startmenu" path="Programs\Deus Ex\Play Deus Ex.lnk" detract="System"/>
         <shortcut ev="startmenu" path="Programs\GOG.com\Deus Ex GOTY\Deus Ex GOTY.lnk" detract="System"/>
       </locations>
-      <files type="Saves">
-        <save path="Save"/>
+      <files>
+        <include path="Save"/>
       </files>
       <files type="Settings">
-        <save path="System" filename="*.ini"/>
+        <include path="System" filename="*.ini"/>
       </files>
       <linkable path="Save"/>
       <identifier path="Save"/>
@@ -298,8 +298,8 @@ If you omit these attributes, then it is saying that the saves described are com
         <path ev="installlocation" path="fs2_open"/>
         <parent name="FreeSpace2" os="Windows"/>
       </locations>
-      <files type="Saves">
-        <save path="data\players"/>
+      <files>
+        <include path="data\players"/>
       </files>
       <identifier filename="fs2_open*"/>
       <comment>Doesn\'t have a default install folder, so might require an Alt. Install Path.</comment>
@@ -320,14 +320,14 @@ By adding an additional Mac-specific version we would be declaring such an incom
         <shortcut ev="startmenu" path="Programs\BattlePack\MechWarrior 2\MechWarrior 2 Uninstall.lnk"/>
       </locations>
       <files type="Mechs">
-        <save path="mek"/>
+        <include path="mek"/>
       </files>
-      <files type="Saves">
-        <save filename="userstar.bwd"/>
+      <files>
+        <include filename="userstar.bwd"/>
       </files>
       <files type="Settings">
-        <save filename="MW2PRM.CFG"/>
-        <save filename="MW2REG.CFG"/>
+        <include filename="MW2PRM.CFG"/>
+        <include filename="MW2REG.CFG"/>
       </files>
       <contributor>GameSave.Info</contributor>
     </version>
@@ -340,14 +340,14 @@ By adding an additional Mac-specific version we would be declaring such an incom
         <shortcut ev="startmenu" path="Programs\Titanium\Mechwarrior2\Play MechWarrior2.lnk" detract="splash"/>
       </locations>
       <files type="Mechs">
-        <save path="mek"/>
+        <include path="mek"/>
       </files>
-      <files type="Saves">
-        <save filename="userstar.bwd"/>
+      <files>
+        <include filename="userstar.bwd"/>
       </files>
       <files type="Settings">
-        <save filename="MW2PRM.CFG"/>
-        <save filename="MW2REG.CFG"/>
+        <include filename="MW2PRM.CFG"/>
+        <include filename="MW2REG.CFG"/>
       </files>
       <contributor>GameSave.Info</contributor>
     </version>
@@ -483,13 +483,13 @@ From there you provide the path to the shortcut, easy peasy!</p>
         <parent name="MechWarrior4Vengeance" os="Windows"/>
       </locations>
       <files type="Mechs">
-        <save path="resource\Variantsx"/>
+        <include path="resource\Variantsx"/>
       </files>
-      <files type="Saves">
-        <save path="resource\Pilotsx"/>
+      <files>
+        <include path="resource\Pilotsx"/>
       </files>
       <files type="Settings">
-        <save filename="optionsx.ini"/>
+        <include filename="optionsx.ini"/>
       </files>
       <identifier filename="optionsx.ini"/>
       <contributor>GameSave.Info</contributor>
@@ -514,8 +514,8 @@ These version elements MUST match a game version that is in the XML file.
         <registry root="local_machine" key="SOFTWARE\GOG.com\GOGALONE1" value="PATH" append="INDARK"/>
         <shortcut ev="startmenu" path="Programs\GOG.com\Alone in the Dark\Alone in the Dark.lnk" detract="DOSBOX" append="INDARK" />
       </locations>
-      <files type="Saves">
-        <save filename="SAVE?.ITD"/>
+      <files>
+        <include filename="SAVE?.ITD"/>
       </files>
       <contributor>GameSave.Info</contributor>
     </version>
@@ -554,11 +554,11 @@ See the above version element section for a list of them.
         <path ev="steamcommon" path="stranger\'s wrath" deprecated="true"/>
         <path ev="userdocuments" path="Oddworld\Stranger\'s Wrath"/>
       </locations>
-      <files type="Saves">
-        <save path="Save"/>
+      <files>
+        <include path="Save"/>
       </files>
       <files type="Settings">
-        <save filename="config.txt"/>
+        <include filename="config.txt"/>
       </files>
       <contributor>Arc Angel</contributor>
       <contributor>slake_jones</contributor>
@@ -579,20 +579,20 @@ After the locations element's closing tag, we can specify one or more "files" el
 <ol>
 <h3><li>Types</li></h3>
 
-<?php formatXml('<files type="Saves">
+<?php formatXml('<files>
 <files type="Settings">'); ?>
 
-<p>Each "files" element has a mandatory "type" attribute.
+<p>Each "files" element has an optional "type" attribute.
 This tells us what type of files are going to be specified within the files tag.
-Most of the time it'll be "Saves", but it could also be "Settings", "Profiles", or anything else.
+It could also be "Settings", "Profiles", or anything else.
 The attribute isn't constrained, so you can be as accurate as necessary.
 When possible, try to conform to existing type names, so there can be some semblence of consistency, but if it absolutely needs to be a new type name, go for it.</p>
 
 
 <h3><li>Files To Save</li></h3>
 
-<?php formatXml('<files type="Saves">
-    <save path="Save"/>
+<?php formatXml('<files>
+    <include path="Save"/>
 </files>',array(2)); ?>
 
 <p>Within each files element, we specify one or more "save" elements that describe the files.
@@ -608,23 +608,23 @@ There are three attributes used to specify files:
 <p>Different combinations of path and filename have different meanings:</p>
 <ul>
 <li>If no path or filename are specified, then that means ALL the files in ALL the folders in the location.</li>
-<?php formatXml('<save />'); ?>
+<?php formatXml('<include />'); ?>
 <li>If only a path is specified, then that means all the files in that folder, but NOT the subfolders.</li>
-<?php formatXml('<save path="Save" />'); ?>
+<?php formatXml('<include path="Save" />'); ?>
 <li>If only a filename is specified, then that means all the files matching that name in the location, but NOT the subfolders.</li>
-<?php formatXml('<save filename="*.sav" />'); ?>
+<?php formatXml('<include filename="*.sav" />'); ?>
 <li>If a path and a filename are specified, then that means all the files matching the name in that specific folder, but NOT the subfolders.</li>
-<?php formatXml('<save path="System" filename="*.ini"/>'); ?>
+<?php formatXml('<include path="System" filename="*.ini"/>'); ?>
 </ul>
 
 <p>The modified_after date is formatted as follows:</p>
-<?php formatXml('<save path="Data\Campaigns" modified_after="2001-10-09T00:00:00"/>'); ?>
+<?php formatXml('<include path="Data\Campaigns" modified_after="2001-10-09T00:00:00"/>'); ?>
 
 
 <h3><li>Except For...</li></h3>
-<?php formatXml('<save path="userdata">
-  <except path="userdata\mp3"/>
-</save>',array(2)); ?>
+<?php formatXml('<include path="userdata">
+  <exclude path="userdata\mp3"/>
+</include>',array(2)); ?>
 
 <p>To make things easier, you can specify a very broad save definition, and refine it using one or more "except" elements under that save element.
 This element can use all the same tags as the "save" element, and they all work exactly the same, except the deselect files instead of selecting them.
@@ -659,7 +659,7 @@ Individual files are not supported here, as Windows freaks the hell out if you t
 <?php formatXml('<game name="BrutalLegend">
     <title>Brütal Legend</title>
     <version os="PS3" region="USA">
-        <ps_code prefix="BLUS" suffix="30330" type="Saves"/>
+        <ps_code prefix="BLUS" suffix="30330"/>
         <contributor>GameSave.Info</contributor>
     </version>
 </game>',array(3,4)); ?>
@@ -668,14 +668,14 @@ Individual files are not supported here, as Windows freaks the hell out if you t
 Instead of "locations", "files" (and the optional "identifier"), you only specify the game's PlayStation code, which can usually be found on the game disc and case.
 Each disc (even within the same game) usually has a unique code,  4 letters then 5 numbers. 
 This code is used in the name of a game's saves.
-As with files, all codes require a type attribute, which will usually be set to Saves.</p>
+Like file tags, you can sepcify a type on a PlayStation Code</p>
 
 <p>For console games you should include the region code, as almost all console saves are guaranteed to be incompatible with those from other countries.</p>
 
 <p>Some more modern PS3 games keep multiple save files for different types of data, sometimes seperating out Profile or setting data.
 Usually these saves wil have extra letters appended to the name. You can specify these with the append tag, as shown in this example from Tomb Raider: Anniversary: </p>
 
-<?php formatXml('<ps_code prefix="BLUS" suffix="30718" append="-TALIST" type="Saves"/>
+<?php formatXml('<ps_code prefix="BLUS" suffix="30718" append="-TALIST"/>
 <ps_code prefix="BLUS" suffix="30718" append="-TAPROFILE" type="Profile"/>'); ?>
 
 <p>Usually you would want to accompany an append with an appropriate type.

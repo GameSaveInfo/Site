@@ -11,6 +11,7 @@ class MASGAU11 extends AXmlExporter {
         $root = $this->createElement("games");
         $this->setAttribute($root,"majorVersion","1");
         $this->setAttribute($root,"minorVersion","1");
+        $this->setAttribute($root,"date",self::formatDate($this->updated));        
         return $root;
     }
 
@@ -100,14 +101,14 @@ class MASGAU11 extends AXmlExporter {
 
         foreach($version->file_types as $file_type) {
             $type = $file_type->name;
-            foreach($file_type->files as $file) {
+            foreach($file_type->inclusions as $file) {
                 $sele = $this->createElement("save");
                 $this->processFields($file,$sele,array("type"));
                 if($file_type->name!="Saves")
                     $this->setAttribute($sele,"type",$file_type->name);
                 $vele->appendChild($sele);
                 
-                foreach($file->excepts as $except) {
+                foreach($file->exclusions as $except) {
                     $eele = $this->createElement("ignore");
                     $this->processFields($except,$eele,array("type","parent"));
                     if($file_type->name!="Saves")
@@ -283,6 +284,7 @@ class MASGAU11 extends AXmlExporter {
                 case "Flash":
                     $platform = $source->platform;
                     break;
+                case "UbisoftSaveStorage":
                 case "RenPy":
                     break;
                 default:
@@ -307,7 +309,8 @@ class MASGAU11 extends AXmlExporter {
                     $country = $source->region;
                     break;
                 default:
-                    throw new Exception($source->region ." not supported");
+                    return false;
+//                    throw new Exception($source->region ." not supported");
             }
             $this->setAttribute($element,"country",$country);
         }

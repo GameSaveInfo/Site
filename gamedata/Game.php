@@ -31,12 +31,10 @@ class Game extends AXmlData {
     	parent::__construct("games",null);
     }
     
-    public $written = false;
     
     public static $types = array("game","mod","system","expansion");
     
-    public function newWriteToDb($con) {
-        
+    public function writeToDb($con) {        
         if($this->for!=null) {
             Games::writeGameToDb($this->for,$con); 
         }
@@ -44,12 +42,11 @@ class Game extends AXmlData {
             Games::writeGameToDb($this->follows,$con);                
         }
 
-        parent::newWriteToDb($con);
-        $this->written = true; // Yay!
+        return parent::writeToDb($con);
     }
 
 
-    protected function getId() {}
+    public function getId() {}
     public function getFields() {
         return array(   "name"=>        array("string", "name",true),
                         "title"=>       array("string", "title", false),
@@ -74,12 +71,33 @@ class Game extends AXmlData {
         parent::loadXml($node);
         
         if(is_null($this->added)) {
-            $this->added = self::formatDate(null);
+            $this->added = Games::$timestamp;
         }
         if(is_null($this->updated)) {
-            $this->updated = self::formatDate(null);
+            $this->updated = Games::$timestamp;
         }
     }    
+    
+    protected function existsInDb($con) {
+        $data = $con->Select($this->table,"count(*) as count",array("name"=>$this->name),null);
+        $data = $data[0];
+        if($data->count>0) {
+            return true;
+        }
+        return false;
+    }
+
+    
+    protected function getDescription() {
+        return $this->title.' ('.$this->name.') ('.$this->type.')';
+    }
+    
+    
+    public $needs_time_updated = false;
+    
+    public function updateTime($con) {
+        $con->Update($this->table,array("id"=>$this->name),array("updated"=>Games::$timestamp),"Updating Game's Updated Timestamp");
+    }
     
     protected function loadSubNode($node, $subs = null) {
         $name = $node->localName;
@@ -96,6 +114,23 @@ class Game extends AXmlData {
 
     public function getForTitle() {
         
+    }
+
+    public function getVersion($id) {
+        foreach($this->versions as $version) {
+            foreach(GameVersion::$id_fields as $field) {
+                if($field=="name")
+                    continue;
+                
+                if($id->$field!=$version->$field) {
+                    continue;
+                }
+                return $version;
+    
+            }
+        }
+        
+        throw new Exception("Specified game version not found");
     }
 
     public function getTitle() {

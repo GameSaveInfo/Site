@@ -26,7 +26,7 @@ class RegistryEntry extends AXmlData {
         $this->type = $parent_id;
 	}
 
-    protected function getId() {
+    public function getId() {
         return null;
     }
     public function getFields() {

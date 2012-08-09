@@ -17,6 +17,11 @@ class RegistryType extends AXmlData {
 	public $entries = array();
     public $game_version;
 
+    protected function getDescription() {
+        return get_class($this).' ('.$this->type.')';
+    }
+
+
 	public static $table_name = "game_registry_types";
 
 	function __construct($parent_id) {
@@ -24,7 +29,7 @@ class RegistryType extends AXmlData {
         $this->game_version = $parent_id;
 	}
 
-    protected function getId() {
+    public function getId() {
         return $this->generateHash();
     }
     public function getFields() {

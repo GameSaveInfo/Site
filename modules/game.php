@@ -386,7 +386,7 @@ if($locations_found) {
         }
         
     } else if (sizeof($registry_locations) > 0) {
-        echo 'Saves can be found in the install folder, which we unfortunately don\'t have any examples of';
+        echo 'Saves can be found in the install folder, which we unfortunately don\'t have any examples of.<br /><br/>';
     }
     if (sizeof($registry_locations) > 0) {
         echo '<details><summary>';
@@ -402,7 +402,7 @@ if($locations_found) {
                 echo '(Default)';
             else
                 echo $location->value;
-            getCommonPathAttributes($location);
+            echo getCommonPathAttributes($location);
             echo '</tr>';
         }
         echo '</ul></details>';
@@ -417,9 +417,9 @@ if($locations_found) {
         echo '<ul>';
         foreach ($shortcut_locations as $location) {
             echo '<li>';
-            getEvDescription($location->ev,$db);
+            echo getEvDescription($location->ev,$db);
             echo '\\' . $location->path;
-            getCommonPathAttributes($location);
+            echo getCommonPathAttributes($location);
             echo '</li>';
         }
         echo '</ul></details>';

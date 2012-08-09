@@ -25,7 +25,7 @@ abstract class Location extends AXmlData {
                                         "only_for"=>array("string","only_for",true),
                                         "deprecated"=>array("boolean","deprecated",true));
 
-    protected function getId() {
+    public function getId() {
         return $this->generateHash();
     }
 
@@ -47,16 +47,17 @@ abstract class Location extends AXmlData {
 	    $this->loc_table = self::$table_name;
     }
     
-    public function newWriteToDb($con) {
-        self::writeDataToDb($this,$this->loc_table,self::$loc_fields,null,$con, 'Writing Common Location information');
-        self::writeDataToDb($this,$this->table,$this->getSubFields(),null,$con, 'Writing '.get_class($this).' to database');
+    public function writeToDb($con) {
+        self::writeDataToDb($this,$this->loc_table,self::$loc_fields,$con, 'Writing Common Location information');
+        self::writeDataToDb($this,$this->table,$this->getSubFields(),$con, 'Writing '.get_class($this).' to database');
+        
     }
     
     
-    private static $ev = null;
+    private static $evs = null;
     public static function getEvDescription($name,$db) {
-        if(is_null(self::$ev)) {
-            self::$ev = array();
+        if(is_null(self::$evs)) {
+            self::$evs = array();
             $data = $db->Select("game_environment_variables",null,null,null);
             foreach($data as $row) {
                 $desc =  $row->description."<br />\n";
@@ -74,11 +75,76 @@ abstract class Location extends AXmlData {
                     }                 
                     $desc .= "</dl>\n";
                 }
-                self::$ev[$row->name] = $desc;
+                self::$evs[$row->name] = $desc;
             }
         }
-        return self::$ev[$name];
+        return self::$evs[$name];
     }
+    
+    
+    public function ajdustLocation($parent_location) {
+        return self::staticAdjustLocation($this,$parent_location);
+    }
+    
+    public static function endsWith($haystack,$needle) {
+        $substr = substr($haystack,strlen($haystack)-strlen($needle),strlen($needle));
+        return $needle = $substr;
+    }
+    public static function remove($string,$remove) {
+        $str = trim(substr($string,0,strlen($string)-strlen($remove)),'\\');
+        
+        if($str=="")
+            return null;
+        
+        return $str;
+    }
+    
+    public static function staticAdjustLocation($location, $parent_location) {
+        if(!is_null($parent_location)) {
+            $class = get_class($location);
+            $new = new $class($location->parent_id);
+            
+            foreach(array_keys($location->getFields()) as $field) {
+                $new->$field = $location->$field;
+            }
+            
+            
+            if(!is_null($parent_location->detract)) {
+                if(get_class($new)=="PathLocation") {
+                    $new->path = self::remove($new->path,$parent_location->detract);
+            $new->path = trim($new->path,'\\');
+                } else {
+                    if(!is_null($new->append)) {
+                        if(self::endsWith($new->append,$parent_location->detract)) {
+                            $new->append = self::remove($new->append,$parent_location->detract);
+                        } 
+                    } else if(is_null($new->detract)) {
+                        $new->detract = $parent_location->detract;
+                    }
+                    
+                }
+            }
+            if(!is_null($parent_location->append)) {
+                if(get_class($new)=="PathLocation") {
+                    $new->path .= "\\".$parent_location->append;
+                    $new->path = trim($new->path,'\\');
+                } else {
+                    if(is_null($new->append)) {
+                        $new->append = $parent_location->append;
+                    }
+                }
+    
+            }
+            if(!is_null($new->append))
+                $new->append = trim($new->append,'\\');
+            if(!is_null($new->detract))
+                $new->detract = trim($new->detract,'\\');
+        }
+        return $new;
+    }
+
+
+    
 }
 
 ?>

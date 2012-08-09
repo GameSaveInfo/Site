@@ -22,7 +22,7 @@ abstract class AFile extends AXmlData {
 		parent::__construct($table_name,$parent_id);
 	}
     
-    protected function getId() {}
+    public function getId() {}
     protected abstract function getSubFields();
     public function getFields() {
         return self::combine(self::$file_fields,$this->getSubFields());
@@ -30,7 +30,21 @@ abstract class AFile extends AXmlData {
     
     protected function getSubObjects() {}
 
-
+    public function concat($all_files = null) {
+        if(!is_null($this->path)) {
+            if(!is_null($this->filename)) {
+                return $this->path."\\".$this->filename;
+            } else if(!is_null($all_files)) {
+                return $this->path."\\".$all_files;
+            }
+            return $this->path;
+        } else if(!is_null($this->filename)) {
+            return $this->filename;
+        } else if(!is_null($all_files)) {
+            return $all_files;
+        }
+        return null;
+    }
 
 }
 

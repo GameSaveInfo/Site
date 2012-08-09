@@ -19,12 +19,18 @@ class FileType extends AXmlData {
 
 	public static $table_name = "game_file_types";
 
+
+    protected function getDescription() {
+        return get_class($this).' ('.$this->name.')';
+    }
+
+
 	function __construct($parent_id) {
 		parent::__construct(self::$table_name,$parent_id);
         $this->game_version = $parent_id;
 	}
 
-    protected function getId() {
+    public function getId() {
         return $this->generateHash();
     }
     public function getFields() {
@@ -41,6 +47,21 @@ class FileType extends AXmlData {
         return $db->Select(self::$table_name,null,array("game_version"=>$id),$this->generateOrder());
     }
 
+    public function concat($sep, $all_files = null) {
+        $return = array();
+        $return["include"] = "";
+        $return["exclude"] = "";
+        foreach($this->inclusions as $inclusion) {
+            $return["include"] .= $inclusion->concat($all_files).$sep;        
+            foreach($inclusion->exclusions as $exclusion) {
+                $return["exclude"] .= $exclusion->concat($all_files).$sep;                        
+            }
+        }
+        $return["include"] = trim($return["include"],$sep);
+        $return["exclude"] = trim($return["exclude"],$sep);
+        
+        return $return;
+    }
     
 }
 

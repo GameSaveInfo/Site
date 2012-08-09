@@ -58,7 +58,7 @@ class GameVersion extends AXmlData {
 	$this->name = $parent_id;
     }
     
-    protected function getId() {
+    public function getId() {
         return $this->generateHash();
     }
     
@@ -177,19 +177,23 @@ class GameVersion extends AXmlData {
         }
     }
     
-    public function newWriteToDb($con) {
-        parent::newWriteToDb($con);
-        
-        foreach($this->contributors as $contributor) {
-            $data = $con->Select("game_contributors",null,array("name"=>$contributor),null);
-                            
-            if(sizeof($data)==0) {
-                $con->Insert('game_contributors', array('name'=>$contributor),'Contributor is new, adding');
+    public function writeToDb($con) {
+        echo '<hr/>';
+
+        if(parent::writeToDb($con)) {        
+            foreach($this->contributors as $contributor) {
+                $data = $con->Select("game_contributors",null,array("name"=>$contributor),null);
+                                
+                if(sizeof($data)==0) {
+                    $con->Insert('game_contributors', array('name'=>$contributor),'Contributor is new, adding');
+                }
+                $con->Insert('game_contributions', 
+                        array('game_version'=>$this->getId(),
+                            'contributor'=>$contributor),"Writing contribution by " . $contributor . " to database");
             }
-            $con->Insert('game_contributions', 
-                    array('game_version'=>$this->getId(),
-                        'contributor'=>$contributor),"Writing contribution by " . $contributor . " to database");
+            return true;
         }
+        return false;
     }
 
 
@@ -210,13 +214,27 @@ class GameVersion extends AXmlData {
         return $header;
     }
 
+    protected function getDescription() {
+        return get_class($this).' ('.$this->getVersionIdFieldString().')';
+    }
 
-    public function getVersionString() {
-        $return_me = $this->concatHelper(array($this->name,$this->os,$this->media,$this->platform,
+
+    public function getVersionIdFieldString() {
+        $return_me = $this->concatHelper(array($this->os,$this->media,$this->platform,
                                         $this->region,$this->release));
             
         return $return_me;
     }
+    public function getVersionString() {
+        $return_me = $this->concatHelper(array($this->name,$this->getVersionIdFieldString()));
+            
+        return $return_me;
+    }
+
+
+
+
+
 
 }
 
