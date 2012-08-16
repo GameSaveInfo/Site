@@ -1,5 +1,4 @@
 <?php
-ob_start("ob_gzhandler");
 abstract class AExporter {
     public $error_occured = false;
     
@@ -14,6 +13,7 @@ abstract class AExporter {
     }
     
     public function export() {
+        ob_start("ob_gzhandler");
         return $this->doExport();
     }
 
