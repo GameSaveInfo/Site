@@ -55,7 +55,7 @@ class GameVersion extends AXmlData {
 
     function __construct($parent_id) {
     	parent::__construct(self::$table_name,$parent_id);
-	$this->name = $parent_id;
+	    $this->name = $parent_id;
     }
     
     public function getId() {
@@ -131,9 +131,9 @@ class GameVersion extends AXmlData {
     }
     
     public static $version_criteria = null;
-    
+    public static $ignore_version_criteria = false;
     public function getRowsFor($id,$db) {
-        if(!is_null(self::$version_criteria))
+        if(!is_null(self::$version_criteria)&&!self::$ignore_version_criteria)
             $crit = self::$version_criteria;
         else
             $crit = array();

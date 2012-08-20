@@ -13,7 +13,9 @@ abstract class AExporter {
     }
     
     public function export() {
-        ob_start("ob_gzhandler");
+            global $test_mode;
+        if($test_mode==false)
+            ob_start("ob_gzhandler");
         return $this->doExport();
     }
 

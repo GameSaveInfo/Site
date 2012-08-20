@@ -186,18 +186,33 @@ class Games {
     private static $replacing = false;
     
     public static function getGameVersion($name,$hash,$link) {
+        GameVersion::$ignore_version_criteria = true;
         $game = self::getGame($name,$link);
+        GameVersion::$ignore_version_criteria = false;
+
         foreach($game->versions as $version) {
             if($version->getId()==$hash) {
                 return $version;
             }
         }
+
+        GameVersion::$ignore_version_criteria = true;
+        $game = self::getGame($name,$link,true);
+        GameVersion::$ignore_version_criteria = false;
+        foreach($game->versions as $version) {
+            if($version->getId()==$hash) {
+                return $version;
+            }
+        }
+        
+        
         throw new Exception($hash." not found");
     }
     
-    public static function getGame($name,$link) {
-        if(!array_key_exists($name,self::$games)) {
+    public static function getGame($name,$link, $force = false) {
+        if(!array_key_exists($name,self::$games)||$force) {
             $result = $link->Select('games',null,array("name"=>$name),null);
+            
             if(sizeof($result)==0) {
                 throw new Exception("GAME DATA FOR ".$name." NOT PRESENT");   
             } else {
