@@ -227,21 +227,37 @@ class Games {
         return self::$games[$name];
     }
     
-    
     public static function writeGameToDb($name, $link) {
+        echo '<hr/>';        
         $game = self::getGame($name,$link);
                 
     	if($game->newWriteToDb($link,true)) {
-            if($game->was_merged)
+            
+            if($game->was_merged) {
+                
                 $game->updateTime($link);
-    	}
-        echo '<hr/>';
+                
+            }
+            return true;
+        } else {
+            return false;
+        }
             
     }
-    public static function writeToDb($con,$replace = false) {
+    
+    public static function writeToDb($con,$max_import,$replace = false) {
+        $total_imported = 0;
         self::$replacing = $replace;
         foreach (self::$games as $game) {
-            self::writeGameToDb($game->name,$con,$replace);
+            if($total_imported>=$max_import) {
+                echo $total_imported." imported, stopping...";
+                return;
+            }
+                echo $total_imported." imported thus far";
+            if(self::writeGameToDb($game->name,$con,$replace)) {
+                $total_imported++;
+                
+            }
 		}
     }
 

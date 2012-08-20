@@ -55,6 +55,7 @@ $(document).ready(function() {
 <?php
 
         global $test_mode;
+        global $branch;
         if($test_mode)
             $branch = "master/";
         else
@@ -74,12 +75,16 @@ $(document).ready(function() {
 
 ?>
 <br />
+
+Import Limit: <input type="text" name="add_game_limit" value="500" /><br />
+
 <select name="file" id="file">
-
+<option>ALL XML FILES</option>
+<option>new.xml</option>
 <?php
-$files = array("system.xml","deprecated.xml","games.xml","new.xml","numeric.xml");
+$files = array("system.xml","deprecated.xml",);
 $alphas = range('a', 'z');
-
+array_push($files, "numeric.xml");
 foreach($alphas as $alpha) {
     array_push($files, $alpha.".xml");
 }
@@ -88,6 +93,7 @@ if(isset($_POST['file'])) {
     $cur_file = $_POST['file'];
 }
 $select_next = false;
+
 foreach($files as $file) {
     if($select_next)
         echo '<option value="'.$file.'" selected="true">' . $file . '</option>';
@@ -97,7 +103,6 @@ foreach($files as $file) {
     $select_next = $file==$cur_file;
 }
 ?>
-<option>ALL XML FILES</option>
 
 </select><br />
 <input type="submit" value="IMPORT IT!" />
@@ -140,24 +145,42 @@ Erase game
 
     }
     
+    function loadfile($file, $open = true) {
+        global $branch;
+        $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
+                $schema_url = $base_url.'GameSaveInfo20.xsd';
+        echo "<details ";
+        if($open)
+            echo "open='true' ";
+        
+        echo "style='clear:both;'><summary>".$file."</summary>";
+        $url = $base_url.$file;
+        
+        require_once('../gamedata/Games.php');
+        Games::loadFromXml($url,$schema_url);
+        echo "</details>";
+
+
+    }
+    
     
     if(isset($_POST['file'])) {
         $file = $_POST['file'];
+        $max = $_POST['add_game_limit'];
 
+        echo '<table style="clear:both;"><tr><td style="clear:both;vertical-align:top;width:48%">';
+        if($file=="ALL XML FILES") {
+            foreach($files as $file) {
+                loadfile($file, false);
+                
+            }
+        } else {
+            loadfile($file);
+        }            
+        echo '</td><td style="clear:both;vertical-align:top;width:48%">';
+        echo "Importing up to ".$max." entries<br/>";
+            Games::writeToDb($db,$max  ,isset($_POST['overwrite']));
         
-        $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
-        $schema_url = $base_url.'GameSaveInfo20.xsd';
-        
-        echo "<details open='true' style='clear:both;'><summary>".$file."</summary>";
-        $url = $base_url.$file;
-        
-        echo '<div style="width:50%;float:left;">File Load:<br />';
-        require_once('../gamedata/Games.php');
-        Games::loadFromXml($url,$schema_url);
-        echo '</div>';
-        echo '<div style="width:50%;float:left;">';
-            Games::writeToDb($db,isset($_POST['overwrite']));
-        echo '</div>';
         if(isset($_POST['update_time'])) {
 		date_default_timezone_set("UTC");
             AXmlData::UpdateRow($db.'.xml_files',
@@ -166,8 +189,7 @@ Erase game
                                 $con,"Updating modified time for ".$file);
         }
 
-echo "</details>";
-        
+        echo '</td></tr></table>';
     }
 
 ?>
