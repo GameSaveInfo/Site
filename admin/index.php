@@ -65,6 +65,7 @@ $(document).ready(function() {
 ?>
 <form enctype="multipart/form-data" method="post">
 <input type="hidden" name="action" value="upload" />
+<input type="hidden" name="overwrite_existing" value="false" />
 <!--<input name='overwrite' type='checkbox' />Overwrite Existing-->
 <?php
 //    $data = AXmlData::RunQuery("SELECT * FROM ".$db.".xml_files ORDER BY name ASC",$con);
@@ -80,8 +81,7 @@ Import Limit: <input type="text" name="add_game_limit" value="500" /><br />
 
 <select name="file" id="file">
 <option>ALL XML FILES</option>
-<option>new.xml</option>
-<?php
+<option>new.xml</option><?php
 $files = array("system.xml","deprecated.xml",);
 $alphas = range('a', 'z');
 array_push($files, "numeric.xml");
@@ -107,6 +107,14 @@ foreach($files as $file) {
 </select><br />
 <input type="submit" value="IMPORT IT!" />
 </form>
+<form enctype="multipart/form-data" method="post">
+<input type="hidden" name="add_game_limit" value="20000" />
+<input type="hidden" name="action" value="upload" />
+<input type="hidden" name="overwrite_existing" value="true" />
+<input type="hidden" name="file" id="file" value="new.xml">
+<input type="submit" value="IMPORT NEW.XML WHICH WILL OVERWRITE EXISTING GAME ENTRIES" />
+</form>
+
 DECLARE AN UPDATE! CHANGELOG:<br/>
 <form enctype="multipart/form-data" method="post">
 <input type="hidden" name="update_time" value="update" />
@@ -137,14 +145,7 @@ Erase game
         $changelog = $_POST['changelog'];
         $db->Insert("update_history",array("changelog"=>$changelog),"UPDATEING UPDATE HISTROY!!!");
     }
-
-
-
-    
-    function doImport($file,$schema,$con) {
-
-    }
-    
+        
     function loadfile($file, $open = true) {
         global $branch;
         $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
@@ -179,7 +180,11 @@ Erase game
         }            
         echo '</td><td style="clear:both;vertical-align:top;width:48%">';
         echo "Importing up to ".$max." entries<br/>";
-            Games::writeToDb($db,$max  ,isset($_POST['overwrite']));
+        $overwrite_existing = false;
+        if($_POST['overwrite_existing']=="true") {
+            $overwrite_existing = true;
+        }        
+        Games::writeToDb($db,$max, $overwrite_existing);
         
         if(isset($_POST['update_time'])) {
 		date_default_timezone_set("UTC");

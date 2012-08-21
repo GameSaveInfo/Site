@@ -13,7 +13,11 @@ abstract class AXmlData {
     function __construct($table,$parent_id) {
     	$this->table = $table;
     	$this->parent_id = $parent_id;
-	}
+	}    
+    
+    protected function getIdFieldName() {
+     return "id";   
+    }
     
     public function loadFromDb($id, $row, $con) {
         
@@ -37,7 +41,12 @@ abstract class AXmlData {
     public static $date_format = 'Y-m-d\TH:i:s';
     public static function formatDate($string = null) {
         date_default_timezone_set("UTC");
-        return date_format(new DateTime($string), self::$date_format);
+        try {
+            return date_format(new DateTime($string), self::$date_format);
+        } catch(Exception $e) {
+            echo $string;
+            throw $e;
+        }
     }
 
     protected function loadDbField($name, $value) {
@@ -86,7 +95,7 @@ abstract class AXmlData {
     }
 
     
-    protected static function writeSubDataToDb($source, $sub_objects, $con) {
+    protected static function writeSubDataToDb($source, $sub_objects, $con, $merge = false) {
         $rv = false;
         if($sub_objects!=null) {
             if(is_null($con))
@@ -98,7 +107,7 @@ abstract class AXmlData {
                 $objects = $source->$sub_object;
                 foreach($objects as $object) {
                     if(is_object($object)) {
-                        if($object->newWriteToDb($con))
+                        if($object->newWriteToDb($con, $merge))
                             $rv = true;
                     } else {
                         throw new Exception($sub_object. ' is not an object ');
@@ -130,6 +139,12 @@ abstract class AXmlData {
     protected function getDescription() {
         return get_class($this);
     }
+    
+    protected function deleteFromDb($con) {
+        $id = $this->getId();
+        $con->Delete($this->table,array($this->getIdFieldName()=>$id),"Deleting ".get_class($this)." from database");
+    }
+    
     protected function existsInDb($con) {
         $id = $this->getId();
         if($id!=null) {
@@ -141,10 +156,8 @@ abstract class AXmlData {
         }
         return false;
     }
-    
-    public $was_merged = false;
-    
-    public function newWriteToDb($con, $recursenomatterwhat = false) {
+        
+    public function newWriteToDb($con, $merge = null) {
         $rv = true;
         if($this->written) {
             echo '<details>';
@@ -154,22 +167,24 @@ abstract class AXmlData {
             return false;
         }
         if($this->existsInDb($con)) {
-            if($recursenomatterwhat) {
+            if($merge) {
                 echo '<details open="true">';
-                echo '<summary style="color:blue">'.$this->getDescription();
-                echo ' (EXISTS, MERGING)</summary>';
-                $rv = $this->writeSubToDb($con);
-                $was_merged = $rv;
+                echo '<summary style="color:red">'.$this->getDescription();
+                echo ' (EXISTS, REPLACING)</summary>';
+                $this->deleteFromDb($con);
+                $rv = $this->writeToDb($con, $merge);
+//                $rv = $this->writeSubToDb($con, $merge);
+                $this->was_merged = $rv;
             } else {
                 echo '<details open="false">';
-                echo '<summary style="color:red">'.$this->getDescription().' (EXISTS, SKIPPING)</summary></details>';
+                echo '<summary style="color:yellow">'.$this->getDescription().' (EXISTS, SKIPPING)</summary></details>';
                 return false;
             }
         } else {
             echo '<details open="true">';
             echo '<summary style="color:orange">'.$this->getDescription();
             echo ' (ADDING)</summary>';
-            $rv = $this->writeToDb($con);            
+            $rv = $this->writeToDb($con, $merge);            
         }
         echo '</details>';            
 
@@ -184,9 +199,9 @@ abstract class AXmlData {
         return false;        
     }    
     
-    public function writeSubToDb($con) {
+    public function writeSubToDb($con, $merge = false) {
         
-        $rv = self::writeSubDataToDb($this, $this->getSubObjects(), $con);
+        $rv = self::writeSubDataToDb($this, $this->getSubObjects(), $con, $merge);
                 $this->written = true; // Yay!
         return $rv;
     }

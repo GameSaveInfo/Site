@@ -96,6 +96,9 @@ class APIController {
         echo "You can filter by game names with wildcards too. Actually it's just the asterisk, but it works:<br/>";
         linkHere("GameSaveInfo20/D*/");
         echo "<br/>";
+        echo "You can also output only games updated since a certain date (this works with almost any PHP parseable date string):<br/>";
+        linkHere("GameSaveInfo20/2012-01-01/");
+        echo "<br/>";
         echo "You can combine criteria by adding more to the end of the URL, for instance this gets all the PS1 games in the USA region:<br/>";
         linkHere("GameSaveInfo20/PS1/USA/");
         echo "<br/>";
@@ -214,6 +217,17 @@ class APIController {
                             $arg = substr($arg,1);
                             $not = true;
                         }
+                        
+                        
+                        $time = strtotime($arg);
+                        if($time!=false) {
+                            $date = AXmlData::formatDate($arg);
+                            array_push($game_criteria, "updated >= '".$this->link->escapeString($date)."'");
+                            //var_dump($game_criteria);
+                            continue;
+                        }
+                        
+                        
                         if($arg=="deprecated") {
                             $game_criteria['deprecated'] = 1;
                         } else if(in_array($arg,Game::$types)) {
@@ -255,6 +269,12 @@ class APIController {
             
             
             Games::loadFromDb($this->link, $game_criteria, $version_criteria);
+            
+            if(Games::GameCount()==0) {
+                $output = "No entries found for:\nGame Criteria: ".$this->link->buildCriteriaString($game_criteria)."\n".
+                                "Version Criteria: ".$this->link->buildCriteriaString($version_criteria);
+                return $output;
+            }
             
             if(is_null($comment)) {
                 $comment = "Game Criteria: ".$this->link->buildCriteriaString($game_criteria)."\n".

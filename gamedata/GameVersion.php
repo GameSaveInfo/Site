@@ -196,6 +196,9 @@ class GameVersion extends AXmlData {
         return false;
     }
 
+    public function writeSubToDb($con, $merge = false) {
+        return parent::writeSubToDb($con,false);
+    }
 
     private static $title_fields = array("os","platform","region","media");
     public function getVersionTitle() {

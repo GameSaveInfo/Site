@@ -17,6 +17,13 @@ class Games {
     function __construct() {
     }
     
+    public static function GameCount() {
+        return (sizeof(self::$games));
+    }
+    
+    
+    
+    
     private static $game_criteria = "type NOT IN ('system') AND deprecated = 0";
 
     public static function getGamesForLetter($letter,$db) {
@@ -227,11 +234,11 @@ class Games {
         return self::$games[$name];
     }
     
-    public static function writeGameToDb($name, $link) {
+    public static function writeGameToDb($name, $link, $merge = false) {
         echo '<hr/>';        
         $game = self::getGame($name,$link);
                 
-    	if($game->newWriteToDb($link,true)) {
+    	if($game->newWriteToDb($link,$merge)) {
             
             if($game->was_merged) {
                 

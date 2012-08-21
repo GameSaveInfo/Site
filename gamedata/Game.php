@@ -96,7 +96,7 @@ class Game extends AXmlData {
     public $needs_time_updated = false;
     
     public function updateTime($con) {
-        $con->Update($this->table,array("id"=>$this->name),array("updated"=>Games::$timestamp),"Updating Game's Updated Timestamp");
+        $con->Update($this->table,array("name"=>$this->name),array("updated"=>Games::$timestamp),"Updating Game's Updated Timestamp");
     }
     
     protected function loadSubNode($node, $subs = null) {
@@ -113,6 +113,26 @@ class Game extends AXmlData {
     }
 
     public function getForTitle() {
+        
+    }
+
+    public $was_merged = false;
+
+    public function newWriteToDb($con, $merge = null) {
+        if($merge) {
+                echo '<details open="true">';
+                echo '<summary style="color:blue">'.$this->getDescription();
+                echo ' (EXISTS, MERGING)</summary>';
+//                $this->deleteFromDb($con);
+            //    $rv = $this->writeToDb($con, $merge);
+                $rv = $this->writeSubToDb($con, $merge);
+                echo '</details>';
+                $this->was_merged = $rv;    
+                return $rv;
+        } else {
+            return parent::newWriteToDb($con,$merge);
+        }
+        
         
     }
 
