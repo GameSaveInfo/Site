@@ -119,7 +119,7 @@ class Game extends AXmlData {
     public $was_merged = false;
 
     public function newWriteToDb($con, $merge = null) {
-        if($merge) {
+        if($merge&&$this->existsInDb($con)) {
                 echo '<details open="true">';
                 echo '<summary style="color:blue">'.$this->getDescription();
                 echo ' (EXISTS, MERGING)</summary>';

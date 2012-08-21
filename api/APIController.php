@@ -137,9 +137,42 @@ class APIController {
         linkHere("GameSaveInfo20/deprecated/");
         echo "<br/>";
         
+        echo "Here's the top ten queries against the database!";
+        echo "<ol>";
+        $queries = $this->link->RunStatement("SELECT exporter, criteria, SUM(count) as sum FROM export_statistics GROUP BY criteria ORDER BY sum DESC");
+        for($i = 0; $i < sizeof($queries) && $i < 10; $i++) {
+            echo "<li>";
+            $path = $queries[$i]->exporter."/";
+            if($queries[$i]->criteria!="")
+                $path .= $queries[$i]->criteria."/";
+            
+            linkHere($path);
+
+            echo "(Queried ".$queries[$i]->sum." Times)</li>";
+        }
+        
+        echo "</ol>";
+        
     }        
     
+    protected function incrementExportAccessCount($cache) {
+        $criteria = array("exporter"=>$cache->exporter,
+                            "criteria"=>$cache->criteria,
+                            "timestamp"=>$cache->timestamp);
+        
+        $result = $this->link->Select("export_statistics",null,$criteria,null);
+        
+        if(sizeof($result)==0) {
+            $this->link->Insert("export_statistics",$criteria);            
+        } else {
+            $result = $result[0];            
+            $this->link->Update("export_statistics",$criteria,array("count"=>$result->count+1));
+        }
+
+    }
+    
     protected function export($exporter, $criteria = null,$comment = null, $date = null) {
+        // If we're on the test server, then caching is disabling
         switch(substr($_SERVER["SERVER_NAME"],0,3)) {
             case "192":
             case "sag":
@@ -150,8 +183,9 @@ class APIController {
                 $nocache = false;
                 break;
         }
-        
+        // Programmatic override for cache dissabling!
         //$nocache = false;
+        
         $cache_criteria = array("exporter"=>$exporter,"criteria"=>trim($criteria,'/'));
         
         $cache = $this->link->Select("export_cache",null,$cache_criteria,null);        
@@ -170,7 +204,7 @@ class APIController {
         
         if(!$nocache&&sizeof($cache)==1) {
             $cache = $cache[0];           
-            $this->link->Update("export_cache",$cache_criteria,array("downloaded"=>$cache->downloaded+1));
+            $this->incrementExportAccessCount($cache);
             header("Content-Type:".$exporter::$content_type."; charset=UTF-8'");
              echo $cache->contents;
         } else {
@@ -285,11 +319,14 @@ class APIController {
                         
             $output = $exp->export();
             
-            if(!$nocache&&!$exp->error_occured) {
+            if(!$exp->error_occured) {
                 if(sizeof($cache)!=0)
              	    $this->link->Delete("export_cache",$cache_criteria);
 
                 $this->link->Insert("export_cache",array("exporter"=>$exporter,"criteria"=>trim($criteria,'/'),"contents"=>$output));
+                                    	        $cache = $this->link->Select("export_cache",null,$cache_criteria,null);        
+
+                $this->incrementExportAccessCount($cache[0]);
             }
                 
             header("Content-Type:".$exporter::$content_type."; charset=UTF-8'");
