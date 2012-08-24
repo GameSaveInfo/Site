@@ -9,6 +9,10 @@
 <html>
 <head>
 <title><?php echo $title; ?></title>
+
+<meta name="description" content="A collection of save game locations, allowing you to easily look up where a game keeps its saves." />
+
+
 <link media="Screen" href="/libs/tooltip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/libs/popups.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/gamesaveinfo-theme/jquery-ui-1.8.21.custom.css" type="text/css" rel="stylesheet" />
@@ -24,11 +28,11 @@ var availableGames = [
 <?php
 $data = $db->Select("games",array("name","title"),null,array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },';
+    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
 }
 $data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },';
+    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
 }
 ?>
 ];
@@ -107,7 +111,8 @@ echo "
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
-<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a>
+<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
+<a href="http://forums.gamesave.info">Forums</a>
 </div>
 
 <div id="adding_games" class="popup">
