@@ -252,6 +252,7 @@ class Games {
             
     }
     
+    
     public static function writeToDb($con,$max_import,$replace = false) {
         $total_imported = 0;
         self::$replacing = $replace;

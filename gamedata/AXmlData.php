@@ -156,8 +156,12 @@ abstract class AXmlData {
         }
         return false;
     }
-        
-    public function newWriteToDb($con, $merge = null) {
+     
+    public function shouldBeOpen() {
+     return false;   
+    }
+     
+    public function newWriteToDb($con, $merge = false) {
         $rv = true;
         if($this->written) {
             echo '<details>';
@@ -168,7 +172,7 @@ abstract class AXmlData {
         }
         if($this->existsInDb($con)) {
             if($merge) {
-                echo '<details open="true">';
+                echo '<details open="'.$this->shouldBeOpen().'">';
                 echo '<summary style="color:red">'.$this->getDescription();
                 echo ' (EXISTS, REPLACING)</summary>';
                 $this->deleteFromDb($con);
@@ -176,12 +180,12 @@ abstract class AXmlData {
 //                $rv = $this->writeSubToDb($con, $merge);
                 $this->was_merged = $rv;
             } else {
-                echo '<details open="false">';
+                echo '<details>';
                 echo '<summary style="color:yellow">'.$this->getDescription().' (EXISTS, SKIPPING)</summary></details>';
                 return false;
             }
         } else {
-            echo '<details open="true">';
+            echo '<details open="'.$this->shouldBeOpen().'">';
             echo '<summary style="color:orange">'.$this->getDescription();
             echo ' (ADDING)</summary>';
             $rv = $this->writeToDb($con, $merge);            

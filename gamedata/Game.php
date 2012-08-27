@@ -118,6 +118,10 @@ class Game extends AXmlData {
 
     public $was_merged = false;
 
+    public static $total_added = 0;
+    public static $total_updated = 0;
+
+
     public function newWriteToDb($con, $merge = null) {
         if($merge&&$this->existsInDb($con)) {
                 echo '<details open="true">';
@@ -127,13 +131,14 @@ class Game extends AXmlData {
             //    $rv = $this->writeToDb($con, $merge);
                 $rv = $this->writeSubToDb($con, $merge);
                 echo '</details>';
-                $this->was_merged = $rv;    
+                $this->was_merged = $rv;
+                self::$total_updated += $rv;                
                 return $rv;
         } else {
-            return parent::newWriteToDb($con,$merge);
-        }
-        
-        
+            $rv = parent::newWriteToDb($con,$merge);
+            self::$total_added += $rv;
+            return $rv;
+        }        
     }
 
     public function getVersion($id) {

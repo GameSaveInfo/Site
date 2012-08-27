@@ -24,6 +24,7 @@ class GameVersion extends AXmlData {
     public $region = null;
     public $release = null;
     public $episode = null;
+    public $type = null;
     
     public $virtualstore = null;
     public $detect = null;
@@ -89,7 +90,7 @@ class GameVersion extends AXmlData {
         return self::$os_names[$name];
     }
         
-    public static $id_fields = array("name","os","platform","region","media","release");
+    public static $id_fields = array("name","os","platform","region","media","release", "type");
 
     public function getFields() {
         $return_me = array();
@@ -176,6 +177,10 @@ class GameVersion extends AXmlData {
             parent::loadDbSubObject($row, $key,$con);
         }
     }
+    public function shouldBeOpen() {
+     return true;   
+    }
+
     
     public function writeToDb($con) {
         echo '<hr/>';

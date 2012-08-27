@@ -186,6 +186,8 @@ Erase game
         }        
         Games::writeToDb($db,$max, $overwrite_existing);
         
+        
+        echo Game::$total_added." added<br/>".Game::$total_updated." updated";
         if(isset($_POST['update_time'])) {
 		date_default_timezone_set("UTC");
             AXmlData::UpdateRow($db.'.xml_files',
