@@ -122,6 +122,7 @@ DECLARE AN UPDATE! CHANGELOG:<br/>
 <input type="submit" value="INITIATE, I SAY!" />
 </form>
 </div>
+
 <div style="width:50%;float:left;">
 DATA PURGE, BEEYOTCH!<br />
 <form enctype="multipart/form-data" method="post">
@@ -137,6 +138,16 @@ Erase game
 ?>
 </select><br />
 <input type="submit" /></form><br/>
+
+Upload a save archive!!<br />
+<form enctype="multipart/form-data" method="post">
+<input type="file" name="archive_upload" /><br/>
+Description:
+<textarea rows="5" cols"50" name="archive_description"></textarea>
+<br />
+<input type="submit" /></form><br/>
+
+
 
 </div>
 <?php

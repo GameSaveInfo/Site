@@ -458,13 +458,31 @@ if($locations_found) {
     }
     $printed = true;
 }
+
 if($printed) {
     $printed = false;
     echo '<hr />';
+    
+    
+    echo '<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1492999866091035";
+/* GameSave.Info */
+google_ad_slot = "7844576363";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>';
+
+    echo '<hr />';
 }
+
+
+
 if(sizeof($ps3_codes)>0||sizeof($psp_codes)>0) {
     echo '<h2>PlayStation Saves</h2>';
-
 }
 
 if(sizeof($ps3_codes)>0) {
