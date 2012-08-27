@@ -158,7 +158,7 @@ abstract class AXmlData {
     }
      
     public function shouldBeOpen() {
-     return false;   
+     return true;   
     }
      
     public function newWriteToDb($con, $merge = false) {

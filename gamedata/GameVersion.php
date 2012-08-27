@@ -178,7 +178,7 @@ class GameVersion extends AXmlData {
         }
     }
     public function shouldBeOpen() {
-     return true;   
+     return false;   
     }
 
     
