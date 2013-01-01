@@ -6,6 +6,6 @@ $letter = $_GET['letter'];
 $games = Games::getGamesForLetter($letter,$db);
 
 foreach($games as $game) {
-	echo '<input type="radio" id="'.$game->name.'" name="game" onclick="window.location.hash = \''.$game->name.'\'" /><label for="'.$game->name.'" id="'.$game->name.'_label">'.$game->title.'</label>';
+	echo '<a href="index.php?letter='.$letter.'&game='.$game->name.'" class="game">'.$game->title.'</a><br/>';
 }
 ?>

@@ -5,93 +5,31 @@
     require_once "gamedata/Games.php";
     
     if(array_key_exists('game',$_GET)) {
-        $current_game = $_GET['game'];
+        $game = $_GET['game'];
     } else {
-        $current_game = "DeusEx";
+        $game = "DeusEx";
     }
     
     if(array_key_exists('letter',$_GET)) {
-        $current_letter = $_GET['letter'];
+        $letter = $_GET['letter'];
     } else {
-        $current_letter = substr($game,0,1);
+        $letter = substr($game,0,1);
     }
-    
-    $games = Games::getGamesForLetter($current_letter,$db);
-
-
              
     $row;
-    $data = $db->Select("games",null,array("name"=>$current_game),array("name"=>"ASC"));
+    $data = $db->Select("games",null,array("name"=>$game),array("name"=>"ASC"));
     if(sizeof($data)==0) {
-        $data = $db->Select("games",null,"name LIKE '".$current_game."%'",array("name"=>"ASC"));
+        $data = $db->Select("games",null,"name LIKE '".$game."%'",array("name"=>"ASC"));
         if(sizeof($data)==0) {
-            throw new Exception($current_game." not found!");
-        }                                            
+            throw new Exception($game." not found!");
+    	}                                            
     }
     $row = $data[0];                        
                 
     $name = $row->name;
     $game_data = new Game();
-    $game_data->loadFromDb($current_game, $row, $db);
+    $game_data->loadFromDb($game, $row, $db);
     
-    
-    // A little data setup
-    global $locations_found;
-    $locations_found = false;
-    
-    global $path_locations;
-    global $registry_locations;
-    global $shortcut_locations;
-    global $game_locations;
-    
-    $path_locations = array();
-    $registry_locations = array();
-    $shortcut_locations = array();
-    $game_locations = array();
-    $scumm_vm = array();
-    $ps3_codes = array();
-    $psp_codes = array();
-    $contributors = array();
-    $file_types = array();
-
-    $locations_found  = loadLocations($game_data,$db);
-
-$i = 0;
-
-    // In this area we're only loading the data
-
-    foreach ($game_data->versions as $version) {
-        foreach($version->file_types as $file) {
-            if(!array_key_exists($file->name,$file_types)) {
-                $file_types[$file->name] = $file->inclusions;   
-            }
-        }
-    
-        //PS codes
-        if (sizeof($version->ps_codes) > 0) {
-            foreach ($version->ps_codes as $path) {
-                switch($version->os) {
-                    case "PS3":
-                    case "PS2":
-                    case "PS1":
-                        array_push($ps3_codes,$path);
-                        break;
-                }
-                switch($version->os) {
-                    case "PS1":
-                    case "PSP":
-                        array_push($psp_codes,$path);
-                        break;
-                }
-            }
-        }
-    
-        foreach($version->contributors as $contrib) {
-            if(!in_array($contrib,$contributors))
-                array_push($contributors,$contrib);   
-        }
-    
-    }
     
 ?><!DOCTYPE HTML>
 <html>
@@ -117,8 +55,6 @@ $i = 0;
 <script type="text/javascript" src="/libs/tooltip.js"></script>
 <script type="text/javascript" src="/libs/popups.js"></script>
 <script type="text/javascript">
-var currentLetter = '<?php echo $letter; ?>';
-var currentGame = '<?php echo $game; ?>';
 var availableGames = [
 <?php
 $data = $db->Select("games",array("name","title"),null,array("name"));
@@ -195,7 +131,28 @@ Thing
 <div class="game">
 <?php
 
+    // A little data setup
+    global $locations_found;
+    $locations_found = false;
     
+    global $path_locations;
+    global $registry_locations;
+    global $shortcut_locations;
+    global $game_locations;
+    
+    $path_locations = array();
+    $registry_locations = array();
+    $shortcut_locations = array();
+    $game_locations = array();
+    $scumm_vm = array();
+    $ps3_codes = array();
+    $psp_codes = array();
+    $contributors = array();
+    $file_types = array();
+
+    $locations_found  = loadLocations($game_data,$db);
+
+
 //echo '<div class="game_versions">';            
 
 //$i = 0;
@@ -209,9 +166,42 @@ Thing
 //}
 //echo "</div>";
 
+$i = 0;
 
+
+
+    foreach ($game_data->versions as $version) {
+        foreach($version->file_types as $file) {
+            if(!array_key_exists($file->name,$file_types)) {
+                $file_types[$file->name] = $file->inclusions;   
+            }
+        }
     
-    // Now we start drawing the data!
+        //PS codes
+        if (sizeof($version->ps_codes) > 0) {
+            foreach ($version->ps_codes as $path) {
+                switch($version->os) {
+                    case "PS3":
+                    case "PS2":
+                    case "PS1":
+                        array_push($ps3_codes,$path);
+                        break;
+                }
+                switch($version->os) {
+                    case "PS1":
+                    case "PSP":
+                        array_push($psp_codes,$path);
+                        break;
+                }
+            }
+        }
+    
+        foreach($version->contributors as $contrib) {
+            if(!in_array($contrib,$contributors))
+                array_push($contributors,$contrib);   
+        }
+    
+    }
 
     $printed = false;
     if($locations_found) {
@@ -506,36 +496,19 @@ echo '</div>';
 
 
 </div>
-<div class="games_drawer">
-<div class="games">
-<?php
-    foreach($games as $game) {
-        $letter = substr($game->name,0,1);
-        echo '<a href="index.php?letter='.$letter.'&game='.$game->name.'" class="game">'.$game->title.'</a><br/>';
-    }
-?>
-</div>
-<div class="games_expander">
->
-</div>
-</div>
-
 <div class="letters">
-
-<div class="letter" id="letter0">#</div>
+<div class="letter"><b class="letter" id="letter0">#</b></div>
 <?php
         $letters = Games::getGameLetters($db);
         $i = 1;
         foreach(array_keys($letters) as $letter) {
-            if($letter!="numeric") {
-                if($current_letter==$letter)
-                    echo '<div class="letter current_letter" id="letter'.$i++.'">';
-                else
-                    echo '<div class="letter" id="letter'.$i++.'">';
-                echo '<a href="index.php?letter='.$letter.'">'.$letter.'</a></div>';
-            }
+            if($letter!="numeric")
+                echo '<div class="letter"><b class="letter" id="letter'.$i++.'">'.$letter.'</b></div>';
         }
 ?>
+</div>
+<div class="games">
+
 </div>
 
 </body>
