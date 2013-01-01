@@ -13,19 +13,22 @@ div.logo b {
         font-size:40px;
     position:relative;
     left:-30px;
-    top:5px;
+    top:0px;
 
 }
 div.count {
     position:absolute;
-    top:75px;
-    left:150px;
+    top:70px;
+    left:160px;
     right:0;
     text-align:left;
     font-size:15px;
 }
 
-
+div.game_title {
+    margin-top:25px;
+    
+}
 div.letters {
     display:none;
     }
@@ -34,9 +37,9 @@ div.letters {
         }
 div.search {
     position:absolute;
-    top:15px;
-    right:15px;
-    width:400px;
+    top:35px;
+    right:0px;
+    left:450px;
 }
 div.search input {
     width:96%;

@@ -162,7 +162,7 @@ echo "
 <body>
 <div class="search">
 
-<input id="search" name="search" value="Search..." />
+<input id="search" name="search" value="Search For Games Here..." />
 </div>
 
 
@@ -177,10 +177,33 @@ echo '<img src="'.$pageURL.'/images/logo.png" />';
 There are currently 
 <?php Games::printGameCounts($db) ?>
  in the database
+<div id="menu">
+<a href="adding_games" class="popup_link">Help Add Games</a> - 
+<a href="/xml_format.php">XML Format</a> - 
+<a href="/api/">API</a> - 
+<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
+<a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
+<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
+<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
+<a href="http://forums.gamesave.info">Forums</a>
+</div>
 </div>
 </div>
 
-
+<div id="adding_games" class="popup">
+<h1>How do I help add games?</h1>
+<ul>
+<li><h2>The Easy Way</h2>
+Just e-mail me the game info at <a href="mailto:submissions@gamesave.info">submissions@gamesave.info</a>. I'll take care of the rest.
+</li>
+<li><h2>The Kind-Of-Easy Way</h2>
+Use <a href="http://masgau.org/">MASGAU</a>'s Save Game Analyzer. It's rigged up to send the game reports straight to me, and it'll make sure that all the game info is collected!
+</li>
+<li><h2>The Hard Way</h2>
+Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repository</a>! Just fork it and commit your heart out! (If you don't understand this, you probably don't want to use this method. E-mail me if you'd like to learn about it!)
+</li>
+</ul>
+</div>
 <!--
 <div class="pointer">
 &#9658;
@@ -475,7 +498,6 @@ echo '<h3>This information was contributed by ';
 echo listFormatter($contributors);
 echo '</h3>';  
 
-
 echo '</div>';
 
 
@@ -546,5 +568,20 @@ echo '</div>';
 ?>
 </div>
 
+<div id="contributors" class="popup">
+<h1>Contributors!</h1>
+<ul>
+<?php
+$data = $db->RunStatement("SELECT contributor as name, COUNT(*) as count FROM game_contributions GROUP BY name ORDER BY count DESC");
+ foreach($data as $row) {
+    echo "<li>".$row->count ." - " .$row->name."</li>";
+}
+
+?>
+</ul>
+</div>
+<div id="credits">
+GameSave.Info is mantained by <a href="mailto:sanmadjack@gamesave.info">Matthew Barbour</a> and various <a href="contributors"  class="popup_link">Contributors</a>
+</div>
 </body>
 </html>
