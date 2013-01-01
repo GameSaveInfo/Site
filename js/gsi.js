@@ -1,4 +1,13 @@
 $(document).ready(function() {
+    if(window.location.hash == "#" || window.location.hash == "") {
+	} else if(window.location.hash == "#numeric") {
+	} else {
+    	game_name = window.location.hash.substring(1).split(";")[0];
+        var path = "http://" + document.domain + "/" + game_name + "/";
+        window.location = path;
+        
+	}
+
     $("#search").autocomplete({ source: availableGames });
     $("#search").autocomplete({ fx: { opacity: 'toggle' } });
     $( "#search" ).autocomplete({
