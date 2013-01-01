@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /~masgau/gamesaveinfo/
+RewriteRule ^.*api/.*$ - [L]
+
+RewriteRule ^([^/]+)/$ index.php?game=$1 [L]

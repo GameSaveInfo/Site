@@ -3,7 +3,7 @@
     require_once 'helpers.php';
     require_once 'gamedata/Game.php';
     require_once "gamedata/Games.php";
-    
+
     if(array_key_exists('game',$_GET)) {
         $current_game = $_GET['game'];
     } else {
@@ -13,11 +13,17 @@
     if(array_key_exists('letter',$_GET)) {
         $current_letter = $_GET['letter'];
     } else {
-        $current_letter = substr($game,0,1);
+        $current_letter = substr($current_game,0,1);
     }
     
     $games = Games::getGamesForLetter($current_letter,$db);
-
+        $pageURL = 'http';
+        $pageURL .= "://";
+        if ($_SERVER["SERVER_PORT"] != "80") {
+            $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"];// . $_SERVER["REQUEST_URI"];
+        } else {
+            $pageURL .= $_SERVER["SERVER_NAME"];// . $_SERVER["REQUEST_URI"];
+        }
 
              
     $row;
@@ -117,8 +123,6 @@ $i = 0;
 <script type="text/javascript" src="/libs/tooltip.js"></script>
 <script type="text/javascript" src="/libs/popups.js"></script>
 <script type="text/javascript">
-var currentLetter = '<?php echo $letter; ?>';
-var currentGame = '<?php echo $game; ?>';
 var availableGames = [
 <?php
 $data = $db->Select("games",array("name","title"),null,array("name"));
@@ -156,9 +160,17 @@ echo "
 
 </head>
 <body>
+<div class="search">
+
+<input id="search" name="search" value="Search..." />
+</div>
+
 
 <div class="logo">
-<img src="images/logo.png" />
+<?php
+echo '<img src="'.$pageURL.'/images/logo.png" />';
+
+?>
 <b style="color:red;">Game</b><b style="color:green;">Save</b><b style="color:yellow;">.</b><b style="color:blue;">Info</b>
 
 <div class="count">
@@ -169,16 +181,12 @@ There are currently
 </div>
 
 
-
 <!--
 <div class="pointer">
 &#9658;
 </div>
 -->
 
-<div class="log">
-Thing
-</div>
 
 <div class="game_title">
 <?php    

@@ -1,0 +1,122 @@
+html, body { overflow: hidden; height: 100% }
+body { margin:0; padding:0; }
+    
+div.count {
+    position:absolute;
+    top:235px;
+    left:100px;
+    right:0;
+    text-align:left;
+    font-size:15px;
+}
+
+div.logo {
+    white-space:nowrap;
+    position:absolute;
+    bottom:0;
+    left:20px;
+    right:0;
+    text-align:left;
+}
+
+div.logo img {
+    height:75px;
+    vertical-align:middle;
+}
+div.logo b {
+    font-size:40px;
+    position:relative;
+    left:-30px;
+    top:15px;
+}
+div.letters {
+    display:none;
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    padding-left:5px;
+    padding-right:5px;
+    vertical-align:middle;
+    font-family:monospace;
+    color:white;
+    background-color:rgba(0,0,0,0.9);
+    border-right: solid 1px white;
+}
+div.letter a {
+    text-decoration:none;
+    color:white;
+}
+div.letter { 
+    vertical-align:middle;
+    width:100%;
+}
+div.current_letter {
+    font-weight:bold;
+}
+div.games_drawer {
+    display:none;
+    position:absolute;
+    top:0;
+    margin:0;
+    padding:0;
+    vertical-align:middle;
+    
+}
+div.games {
+    display:none;
+    padding-left:10px;
+    background-color:rgba(0,0,0,0.9);
+    border-right: solid 1px white;
+    color:white;
+    overflow-x:hidden;
+    overflow-y:auto;
+    white-space:nowrap;
+    height:auto;
+    margin-top:auto;
+    margin-bottom:auto;
+    width:0;
+    text-align:left;
+}
+div.games_drawer:hover div.games {
+    width:auto;
+}
+div.games a{
+    color:white;
+    text-decoration:none;
+}
+div.games a:hover{
+    font-size:20px;
+    font-weight:bold;
+}    
+
+div.pointer {
+    position:absolute;
+    left:50px;
+}
+
+b.letter:hover {
+    cursor:pointer;
+    color:red;
+}
+div.log {
+    position:absolute;
+    right:0;
+    bottom:100px;
+}
+
+div.game_title {
+    font-size:30px;
+    position:absolute;
+    top:10px;
+    left:10px;
+    white-space:nowrap;
+}
+div.game {
+    position:absolute;
+    top:55px;
+    left:10px;
+    bottom:100px;
+    right:0;
+    border:solid 1px black;
+}
