@@ -20,4 +20,10 @@ $(document).ready(function() {
         document.getElementById("search").value = "";
     });
     
+    $(".game_list").click(function(event) {
+        $(".list_of_games").hide();
+        var temp = $(this).children();
+        temp.show();
+    });
+    
 });

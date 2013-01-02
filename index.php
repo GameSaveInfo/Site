@@ -7,16 +7,11 @@
     if(array_key_exists('game',$_GET)) {
         $current_game = $_GET['game'];
     } else {
-        $current_game = "DeusEx";
+        $current_game = null;
     }
     
-    if(array_key_exists('letter',$_GET)) {
-        $current_letter = $_GET['letter'];
-    } else {
-        $current_letter = substr($current_game,0,1);
-    }
     
-    $games = Games::getGamesForLetter($current_letter,$db);
+//    $games = Games::getGamesForLetter($current_letter,$db);
         $pageURL = 'http';
         $pageURL .= "://";
         if ($_SERVER["SERVER_PORT"] != "80") {
@@ -26,6 +21,7 @@
         }
 
              
+    if($current_game != null ) {
     $row;
     $data = $db->Select("games",null,array("name"=>$current_game),array("name"=>"ASC"));
     if(sizeof($data)==0) {
@@ -34,6 +30,7 @@
             throw new Exception($current_game." not found!");
         }                                            
     }
+    
     $row = $data[0];                        
                 
     $name = $row->name;
@@ -98,7 +95,7 @@ $i = 0;
         }
     
     }
-    
+    }
 ?><!DOCTYPE HTML>
 <html>
 <head>
@@ -160,15 +157,32 @@ echo "
 
 </head>
 <body>
+
+
+<div class="ads">
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-1492999866091035";
+/* GameSave.Info Vertical */
+google_ad_slot = "5386532727";
+google_ad_width = 160;
+google_ad_height = 600;
+//-->
+</script>
+<script type="text/javascript"
+src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
 <div class="search">
 
 <input id="search" name="search" value="Search For Games Here..." />
 </div>
 
 
+
+
 <div class="logo">
 <?php
-echo '<img src="'.$pageURL.'/images/logo.png" />';
+echo '<a href="/"><img src="'.$pageURL.'/images/logo.png" /></a>';
 
 ?>
 <b style="color:red;">Game</b><b style="color:green;">Save</b><b style="color:yellow;">.</b><b style="color:blue;">Info</b>
@@ -189,6 +203,28 @@ There are currently
 </div>
 </div>
 </div>
+
+<div id="all_games_list">
+<?php 
+if($current_game ==null) {
+$last_letter = null;
+$data = $db->Select("games",array("name","title"),null,array("name"));
+echo '<div><div><ul>';
+ foreach($data as $row) {
+     $letter = strtoupper(substr($row->name,0,1));
+     if(is_numeric($letter))
+        $letter = '#';
+     
+     if($letter != $last_letter)  {
+     echo '</ul></div></div><div id="'.$letter.'" class="game_list"><a name="'.$letter.'"/>'.strtoupper($letter).'</a><div class="list_of_games"><ul>';
+     $last_letter = strtoupper($letter);
+     }
+    echo '<li><a href="/'.$row->name.'/">'.$row->title.'</a></li>';
+}
+}
+?>
+</ul></div>
+</div></div>
 
 <div id="adding_games" class="popup">
 <h1>How do I help add games?</h1>
@@ -211,8 +247,10 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
 -->
 
 
+
 <div class="game_title">
-<?php    
+<?php
+if($current_game!=null) {
     echo $game_data->title;
     if(strtolower($game_data->type)!="game") {
         echo " (".ucfirst($game_data->type).")";
@@ -220,6 +258,7 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
     if ($game_data->deprecated) {
         echo '<h4>NOTE: This game version has been marked as deprecated</h4>';
     }
+}
  ?>
 </div>
 
@@ -245,7 +284,7 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
     // Now we start drawing the data!
 
     $printed = false;
-    if($locations_found) {
+    if($current_game!=null && $locations_found) {
         echo '<h2>PC Saves</h2>';
         echo '<div class="locations">';
         if(sizeof($path_locations)>0) {
@@ -409,20 +448,10 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
             echo $version->restore_comment;
         }
         $printed = true;
-            echo '<script type="text/javascript"><!--
-google_ad_client = "ca-pub-1492999866091035";
-/* GameSave.Info */
-google_ad_slot = "7844576363";
-google_ad_width = 728;
-google_ad_height = 90;
-//-->
-</script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>';
         
     }
 
+if($current_game!=null) {
 
 if(sizeof($ps3_codes)>0||sizeof($psp_codes)>0) {
     echo '<h2>PlayStation Saves</h2>';
@@ -531,6 +560,7 @@ while($row = mysql_fetch_array($data)) {
 }
 */
 echo '</div>';
+}
 ?>
 
 

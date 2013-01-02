@@ -27,8 +27,21 @@ div.count {
 
 div.game_title {
     margin-top:25px;
+}
+
+div.game_list {
+    float:left;
     
 }
+div.game_list:first-child {
+    font-size:30px;
+}
+div.game_list a:hover {
+    color:red;
+    cursor:pointer;
+}
+
+    
 div.letters {
     display:none;
     }
@@ -47,4 +60,16 @@ div.search input {
 div.game_title {
     font-weight:bold;
     font-size:30px;
+    }
+    
+    div.ads {
+        position:absolute;
+        right:10px;
+        top:100px;
+        border:solid 1px black;
+    }
+    div#credits {
+        position:absolute;
+        bottom:0;
+        right:0;
     }
