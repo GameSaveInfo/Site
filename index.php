@@ -212,30 +212,24 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </div>
 
 
-<div class="all_games_list">
+<div class="anouncements">
 <?php 
-if($current_game ==null) {
-    echo '<div class="letters">';
-    echo '<table><tr>';
-    $letters = Games::getGameLetters($db);
-    $i = 1;
-    $width = count($letters);
-    if($width>0) {
-        $width = 100 / $width;
-        foreach(array_keys($letters) as $letter) {
-            if($letter!="numeric") {
-                echo '<td style="width:'.$width.'%"><a href="games_list_'.$letter.'" class="popup_link">'.$letter.'</a></td>';
-            } else {
-                echo '<td style="width:'.$width.'%"><a href="games_list_numeric" class="popup_link">#</a></td>';
-            }
+echo '<div class="letters">';
+echo '<table><tr>';
+$letters = Games::getGameLetters($db);
+$i = 1;
+$width = count($letters);
+if($width>0) {
+    $width = 100 / $width;
+    foreach(array_keys($letters) as $letter) {
+        if($letter!="numeric") {
+            echo '<td style="width:'.$width.'%"><a href="games_list_'.$letter.'" class="popup_link">'.$letter.'</a></td>';
+        } else {
+            echo '<td style="width:'.$width.'%"><a href="games_list_numeric" class="popup_link">#</a></td>';
         }
-    }    
-    echo '</tr></table></div>';
-    $news = $db->Select("anouncements",null,null,array("timestamp"));
-    foreach($news as $row) {
-        echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
     }
-    
+}    
+echo '</tr></table></div>';
     $last_letter = null;
     $data = $db->Select("games",array("name","title"),null,array("name"));
     $first = true;
@@ -261,6 +255,11 @@ if($current_game ==null) {
          echo '<li><a href="\\'.$row->name.'\\">'.$row->title.'</a></li>';
     }
     echo '</ul></div>';
+if($current_game ==null) {
+    $news = $db->Select("anouncements",null,null,array("timestamp"));
+    foreach($news as $row) {
+        echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
+    }
 }
 ?>
 </ul></div>
