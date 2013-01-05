@@ -118,7 +118,7 @@ display:none !important;
 .version_footer {
     padding-top:10px;
     width:100%;
-    clear:both;
+    clear:left;
 }
 
 dl.ev_example dt {

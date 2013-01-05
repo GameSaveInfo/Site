@@ -10,15 +10,6 @@ div.count {
     font-size:15px;
 }
 
-div.logo {
-    white-space:nowrap;
-    position:absolute;
-    bottom:0;
-    left:20px;
-    right:0;
-    text-align:left;
-}
-
 div.logo img {
     height:75px;
     vertical-align:middle;

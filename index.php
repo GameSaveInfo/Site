@@ -105,7 +105,8 @@ $i = 0;
 ?>
 </title>
 
-<meta name="description" content="A save game backup and resture utility. Creates easy-to-use archives that can be restored to any supported system." />
+<meta name="description" content="A database of save game locations" />
+<meta name="viewport" content="width=950, initial-scale=1.0">
 
 <link media="Screen" href="/css/ogsip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/ui-darkness/jquery-ui-1.9.0.custom.css" type="text/css" rel="stylesheet" />
@@ -139,8 +140,11 @@ $data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",ar
   global $test_mode;
 
 if(!$test_mode) {
+
 echo "
   _gaq.push(['_setAccount', 'UA-32952901-1']);
+  _gaq.push(['_setDomainName', 'gamesave.info']);
+  _gaq.push(['_setAllowLinker', true]);
   _gaq.push(['_trackPageview']);
 
   (function() {
@@ -159,7 +163,41 @@ echo "
 <body>
 
 
+<div class="search">
+
+<input id="search" name="search" value="Search For Games Here..." />
+</div>
+
+
+
+
+<div class="logo">
+<a href="/"><img src="/images/logo.png" /></a>
+</div>
+
+<div class="title">
+<a href="/" class="title"><b class="title red">Game</b><b class="title green">Save</b><b class="title yellow">.</b><b class="title blue">Info</b></a>
+</div>
+
+<div class="count">
+There are currently 
+<?php Games::printGameCounts($db) ?>
+ in the database
+</div>
+
+<div class="menu">
+<a href="adding_games" class="popup_link">Help Add Games</a> - 
+<a href="/xml_format.php">XML Format</a> - 
+<a href="/api/">API</a> - 
+<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
+<a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
+<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
+<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
+<a href="http://forums.gamesave.info">Forums</a>
+</div>
+
 <div class="ads">
+&nbsp;
 <script type="text/javascript"><!--
 google_ad_client = "ca-pub-1492999866091035";
 /* GameSave.Info Vertical */
@@ -172,55 +210,57 @@ google_ad_height = 600;
 src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
 </div>
-<div class="search">
-
-<input id="search" name="search" value="Search For Games Here..." />
-</div>
 
 
-
-
-<div class="logo">
-<?php
-echo '<a href="/"><img src="'.$pageURL.'/images/logo.png" /></a>';
-
-?>
-<b style="color:red;">Game</b><b style="color:green;">Save</b><b style="color:yellow;">.</b><b style="color:blue;">Info</b>
-
-<div class="count">
-There are currently 
-<?php Games::printGameCounts($db) ?>
- in the database
-<div id="menu">
-<a href="adding_games" class="popup_link">Help Add Games</a> - 
-<a href="/xml_format.php">XML Format</a> - 
-<a href="/api/">API</a> - 
-<a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
-<a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
-<a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
-<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
-<a href="http://forums.gamesave.info">Forums</a>
-</div>
-</div>
-</div>
-
-<div id="all_games_list">
+<div class="all_games_list">
 <?php 
 if($current_game ==null) {
-$last_letter = null;
-$data = $db->Select("games",array("name","title"),null,array("name"));
-echo '<div><div><ul>';
- foreach($data as $row) {
-     $letter = strtoupper(substr($row->name,0,1));
-     if(is_numeric($letter))
-        $letter = '#';
-     
-     if($letter != $last_letter)  {
-     echo '</ul></div></div><div id="'.$letter.'" class="game_list"><a name="'.$letter.'"/>'.strtoupper($letter).'</a><div class="list_of_games"><ul>';
-     $last_letter = strtoupper($letter);
-     }
-    echo '<li><a href="/'.$row->name.'/">'.$row->title.'</a></li>';
-}
+    echo '<div class="letters">';
+    echo '<table><tr>';
+    $letters = Games::getGameLetters($db);
+    $i = 1;
+    $width = count($letters);
+    if($width>0) {
+        $width = 100 / $width;
+        foreach(array_keys($letters) as $letter) {
+            if($letter!="numeric") {
+                echo '<td style="width:'.$width.'%"><a href="games_list_'.$letter.'" class="popup_link">'.$letter.'</a></td>';
+            } else {
+                echo '<td style="width:'.$width.'%"><a href="games_list_numeric" class="popup_link">#</a></td>';
+            }
+        }
+    }    
+    echo '</tr></table></div>';
+    $news = $db->Select("anouncements",null,null,array("timestamp"));
+    foreach($news as $row) {
+        echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
+    }
+    
+    $last_letter = null;
+    $data = $db->Select("games",array("name","title"),null,array("name"));
+    $first = true;
+    foreach($data as $row) {
+         if(is_numeric($letter))
+            $letter = '#';
+         $letter = strtoupper(substr($row->name,0,1));
+            
+        if($first || $letter != $last_letter) {
+            if(!$first) {
+                echo '</ul></div>';
+            }
+            echo '<div class="popup" id="games_list_';
+            if($letter == '#')
+                echo 'numeric';
+            else
+                echo $letter;
+            echo '"><ul>';
+            $first = false;
+            $last_letter = strtoupper($letter);
+        }
+         
+         echo '<li><a href="\\'.$row->name.'\\">'.$row->title.'</a></li>';
+    }
+    echo '</ul></div>';
 }
 ?>
 </ul></div>
@@ -580,23 +620,6 @@ echo '</div>';
 </div>
 </div>
 
-<div class="letters">
-
-<div class="letter" id="letter0">#</div>
-<?php
-        $letters = Games::getGameLetters($db);
-        $i = 1;
-        foreach(array_keys($letters) as $letter) {
-            if($letter!="numeric") {
-                if($current_letter==$letter)
-                    echo '<div class="letter current_letter" id="letter'.$i++.'">';
-                else
-                    echo '<div class="letter" id="letter'.$i++.'">';
-                echo '<a href="index.php?letter='.$letter.'">'.$letter.'</a></div>';
-            }
-        }
-?>
-</div>
 
 <div id="contributors" class="popup">
 <h1>Contributors!</h1>
