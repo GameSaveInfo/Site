@@ -25,11 +25,15 @@
     $row;
     $data = $db->Select("games",null,array("name"=>$current_game),array("name"=>"ASC"));
     if(sizeof($data)==0) {
-        $data = $db->Select("games",null,"name LIKE '".$current_game."%'",array("name"=>"ASC"));
-        if(sizeof($data)==0) {
+        //$data = $db->Select("games",null,"name LIKE '".$current_game."%'",array("name"=>"ASC"));
+        //if(sizeof($data)==0) {
+            header("Location: http://gamesave.info/");
+            exit;
             throw new Exception($current_game." not found!");
-        }                                            
+        //}                                            
     }
+    
+    
     
     $row = $data[0];                        
                 
@@ -37,6 +41,9 @@
     $game_data = new Game();
     $game_data->loadFromDb($current_game, $row, $db);
     
+    
+    
+
     
     // A little data setup
     global $locations_found;
@@ -59,7 +66,7 @@
 
     $locations_found  = loadLocations($game_data,$db);
 
-$i = 0;
+    $i = 0;
 
     // In this area we're only loading the data
 
@@ -189,6 +196,7 @@ There are currently
 <a href="adding_games" class="popup_link">Help Add Games</a> - 
 <a href="/xml_format.php">XML Format</a> - 
 <a href="/api/">API</a> - 
+<a href="/statistics.php">Statistics</a> - 
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
@@ -234,19 +242,21 @@ echo '</tr></table></div>';
     $data = $db->Select("games",array("name","title"),null,array("name"));
     $first = true;
     foreach($data as $row) {
+            
+         $letter = strtoupper(substr($row->name,0,1));
          if(is_numeric($letter))
             $letter = '#';
-         $letter = strtoupper(substr($row->name,0,1));
             
         if($first || $letter != $last_letter) {
             if(!$first) {
                 echo '</ul></div>';
             }
             echo '<div class="popup" id="games_list_';
-            if($letter == '#')
+            if($letter == '#') {
                 echo 'numeric';
-            else
+            } else {
                 echo $letter;
+            }
             echo '"><ul>';
             $first = false;
             $last_letter = strtoupper($letter);
@@ -260,6 +270,7 @@ if($current_game ==null) {
     foreach($news as $row) {
         echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
     }
+    echo '<div class="rss"><a href="rss.php">Updates RSS</a></div>';
 }
 ?>
 </ul></div>

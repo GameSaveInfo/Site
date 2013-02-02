@@ -53,7 +53,10 @@ class APIController {
     
     
     protected function drawExporterList() {
-        
+        echo '<html><head>';
+        echo '<META NAME="robots" CONTENT="noindex,nofollow,noarchive">';
+        echo '<title>GameSave.Info API</title>';
+        echo '</head><body>';
         function linkHere($address, $newline = true, $text = null) {                
             global $_SERVER;
             $address = "http://".$_SERVER["SERVER_NAME"].'/api/'.$address;
@@ -152,7 +155,7 @@ class APIController {
         }
         
         echo "</ol>";
-        
+        echo '</body></html>';
     }        
     
     protected function incrementExportAccessCount($cache) {
