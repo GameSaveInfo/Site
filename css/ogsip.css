@@ -25,11 +25,6 @@ a {
 .tooltip ul {
     margin:3px;    
 }
-#credits {
-	position:absolute;
-	bottom:0;
-	right:5px;
-}
 
 #letters {
 	position:absolute;
@@ -51,12 +46,6 @@ div.spinner {
 }
 div#letters label {
     font-size:10pt;   
-}
-div.search {
-    position:absolute;
-    left:5px;
-	top:155px;
-    right:80%;
 }
 div.search input {
     width:96%;
@@ -129,7 +118,7 @@ display:none !important;
 .version_footer {
     padding-top:10px;
     width:100%;
-    clear:both;
+    clear:left;
 }
 
 dl.ev_example dt {

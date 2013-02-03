@@ -35,6 +35,9 @@ class MASGAU11 extends AXmlExporter {
     }
 
     protected function createGameVersionElement($game, $version) {
+        if($version->type!=null)
+            return null;
+        
         $vele = $this->createElement("game");
         
         if(!$this->setGameVersionAttributes($vele, $version)) {

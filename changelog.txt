@@ -1,0 +1,6 @@
+2/3
+* Added RSS feed for site updates
+* Added sitemap for search enginge crawlers
+* Fixed the numeric games list not appearing
+* Fixed redirects erroring out on letters only or when missing the trailing slash
+* Added statistics page!
