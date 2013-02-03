@@ -88,12 +88,12 @@ font-height:10px;
                 
                 outputStats("select path.filename AS DISPLAY, count(*) AS VALUE from game_files path 
                 left join game_file_types type ON type.id = path.type
-                where filename IS NOT NULL AND type.name IS NULL group by path.filename having count(*) > 1 order by count(*) desc",
+                where filename IS NOT NULL AND type.name IS NULL group by path.filename having count(*) > 2 order by count(*) desc",
                 "Save Filenames*","save_filenames");
                 
                 outputStats("select IFNULL(path.path,'ROOT FOLDER') AS DISPLAY, count(*) AS VALUE from game_files path 
                 left join game_file_types type ON type.id = path.type
-                where path is not null AND type.name IS NULL group by path.path having count(*) > 2 order by count(*) desc ",
+                where path is not null AND type.name IS NULL group by path.path having count(*) > 4 order by count(*) desc ",
                 "Save Paths*","save_paths");
 
                 
@@ -137,7 +137,7 @@ font-height:10px;
 
 <tr>
     <td><div class="chart" id="paths_by_ev"></div></td>
-    <td>This is an interesting one. This shows where games tend to keep their saves. Fortunately, My Documents has taken over as the king of save locations. Just a few short years ago games were mostly still keeping their saves in the install folder.</td>
+    <td>This is an interesting one. This shows where games tend to keep their saves. Fortunately, My Documents has taken over as the king of save locations. Just a few short years ago games were mostly still keeping their saves in the install folder. Windows Vista and later have a "Saved Games" folder, but as you can see here it's only used in about 2% of games.</td>
 </tr>
 
 <tr>
@@ -152,11 +152,11 @@ font-height:10px;
 
 <tr>
     <td><div class="chart" id="save_filenames"></div></td>
-    <td>This shows the names that saves tend to have. Only names with more than one occurance are shown.</td>
+    <td>This shows the names that saves tend to have. Only names with more than two occurances are shown.</td>
 </tr>
 <tr>
     <td><div class="chart" id="save_paths"></div></td>
-    <td>This shows the paths (relative to the root of the install folder or whatever) that are typically used for saves. Only paths with more than two occurances are shown.</td>
+    <td>This shows the paths (relative to the root of the install folder or whatever) that are typically used for saves. Only paths with more than four occurances are shown.</td>
 </tr>
 
 

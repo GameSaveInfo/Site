@@ -1,4 +1,4 @@
-1/30
+2/3
 * Added RSS feed for site updates
 * Added sitemap for search enginge crawlers
 * Fixed the numeric games list not appearing
