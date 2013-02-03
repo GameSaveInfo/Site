@@ -262,7 +262,7 @@ echo '</tr></table></div>';
             $last_letter = strtoupper($letter);
         }
          
-         echo '<li><a href="\\'.$row->name.'\\">'.$row->title.'</a></li>';
+         echo '<li><a href="/'.$row->name.'/">'.$row->title.'</a></li>';
     }
     echo '</ul></div>';
 if($current_game ==null) {
