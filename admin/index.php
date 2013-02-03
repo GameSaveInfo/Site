@@ -81,7 +81,7 @@ Import Limit: <input type="text" name="add_game_limit" value="500" /><br />
 
 <select name="file" id="file">
 <option>ALL XML FILES</option>
-<option>new.xml</option><?php
+<?php
 $files = array("system.xml","deprecated.xml",);
 $alphas = range('a', 'z');
 array_push($files, "numeric.xml");
