@@ -86,7 +86,20 @@ class Game extends AXmlData {
         }
         return false;
     }
-
+    public function getExtendedTitle() {
+        $output = $this->title;
+        if($this->type == 'mod' ) {
+            $output .= " (". $this->for ." Mod)";
+        }
+        return $output;
+    }
+    public static function getExtendedTitleFor($row) {
+        $output = $row->title;
+        if($row->type == 'mod' ) {
+            $output .= " (". $row->for ." Mod)";
+        }
+        return $output;
+    }
     
     protected function getDescription() {
         return $this->title.' ('.$this->name.') ('.$this->type.')';

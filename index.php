@@ -106,9 +106,11 @@
 ?><!DOCTYPE HTML>
 <html>
 <head>
-<title>GameSave.Info - 
+<title>GameSave.Info
 <?php
-    echo $game_data->title;
+if (isset($game_data)) {
+    echo " - ".$game_data->getExtendedTitle();
+}
 ?>
 </title>
 
@@ -130,13 +132,13 @@
 <script type="text/javascript">
 var availableGames = [
 <?php
-$data = $db->Select("games",array("name","title"),null,array("name"));
+$data = $db->Select("games",null,null,array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
+    echo '{ label: "'.Game::getExtendedTitleFor($row).'", value: "'.$row->name.'" },'."\n";
 }
-$data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",array("name"));
+$data = $db->Select("game_versions",null,"title IS NOT NULL",array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
+    echo '{ label: "'.Game::getExtendedTitleFor($row).'", value: "'.$row->name.'" },'."\n";
 }
 ?>
 ];
@@ -239,7 +241,7 @@ if($width>0) {
 }    
 echo '</tr></table></div>';
     $last_letter = null;
-    $data = $db->Select("games",array("name","title"),null,array("name"));
+    $data = $db->Select("games",null,"type != 'system'",array("name"));
     $first = true;
     foreach($data as $row) {
             
@@ -262,7 +264,7 @@ echo '</tr></table></div>';
             $last_letter = strtoupper($letter);
         }
          
-         echo '<li><a href="/'.$row->name.'/">'.$row->title.'</a></li>';
+         echo '<li><a href="/'.$row->name.'/">'.Game::getExtendedTitleFor($row).'</a></li>';
     }
     echo '</ul></div>';
 if($current_game ==null) {
@@ -301,10 +303,10 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
 <div class="game_title">
 <?php
 if($current_game!=null) {
-    echo $game_data->title;
-    if(strtolower($game_data->type)!="game") {
-        echo " (".ucfirst($game_data->type).")";
-    }
+    echo $game_data->getExtendedTitle();
+//    if(strtolower($game_data->type)!="game") {
+        //echo " (".ucfirst($game_data->type).")";
+    //}
     if ($game_data->deprecated) {
         echo '<h4>NOTE: This game version has been marked as deprecated</h4>';
     }
@@ -615,19 +617,6 @@ echo '</div>';
 
 
 
-</div>
-<div class="games_drawer">
-<div class="games">
-<?php
-    foreach($games as $game) {
-        $letter = substr($game->name,0,1);
-        echo '<a href="index.php?letter='.$letter.'&game='.$game->name.'" class="game">'.$game->title.'</a><br/>';
-    }
-?>
-</div>
-<div class="games_expander">
->
-</div>
 </div>
 
 
