@@ -1,29 +1,30 @@
 <?php
-
+    $output = '';
     include_once '../headers.php';
     if(!class_exists("Database")) {
         include_once '../libs/Database.php';
-   }
+    }
    
 
-    if(isset($_POST['erase_game_safety'])) {
+    if(isset($_POST['action'])) {
+        $action = $_POST['action'];
+        $output .= ' Requested action is '.$action;
         
-        if($_POST['erase_game']=="ALL GAME IN DATABASE") {
-//            $result = AXmlData::SelectRow('games',"name",array("for"=>null,"follows"=>null),null,$con);
-            
-  //          while ($row = mysql_fetch_assoc($result)) {
-                $db->Delete('games',null,"Deleting ALL From Database");
-    //        }
-        } else {
-            $game = $_POST['erase_game'];
-            $db->Delete('games',array("name"=>$game),"Deleting ".$game." From Database");
-//            if(array_key_exists($game,$_POST)&&$_POST[$game]=="ALL") {
-  //              $db->Delete('games',array('name'=>$_POST['erase_game']),"Deleting Game ".$_POST['erase_game']." From the Database");
-    //        } else {
-      //          $db->Delete('game_versions',array('id'=>$_POST[$game]),"Deleting Game ".$_POST['erase_game']."'s version ID ".$_POST[$game]." From the Database");
-        //    }
+        switch($action) {
+            case 'erase':
+                if(isset($_POST['erase_game_safety'])) {
+                    if($_POST['erase_game']=="ALL GAME IN DATABASE") {
+                        $db->Delete('games',null,"Deleting ALL From Database");
+                    } else {
+                        $game = $_POST['erase_game'];
+                        $db->Delete('games',array("name"=>$game),"Deleting ".$game." From Database");
+                    }
+                } else {
+                    $output .= ' Erase safety not set.';
+                }
+                break;
         }
-    }
+    } 
 ?>
 <style>
 details details {
@@ -64,7 +65,7 @@ $(document).ready(function() {
     echo 'XML File Import From '.$branch.' Branch Of GitHub';
 ?>
 <form enctype="multipart/form-data" method="post">
-<input type="hidden" name="action" value="upload" />
+<input type="hidden" name="action" value="import" />
 <input type="hidden" name="overwrite_existing" value="false" />
 <!--<input name='overwrite' type='checkbox' />Overwrite Existing-->
 <?php
@@ -108,6 +109,7 @@ foreach($files as $file) {
 <input type="submit" value="IMPORT IT!" />
 </form>
 <form enctype="multipart/form-data" method="post">
+<input type="hidden" name="action" value="import_new" />
 <input type="hidden" name="add_game_limit" value="20000" />
 <input type="hidden" name="action" value="upload" />
 <input type="hidden" name="overwrite_existing" value="true" />
@@ -117,7 +119,7 @@ foreach($files as $file) {
 
 DECLARE AN UPDATE! CHANGELOG:<br/>
 <form enctype="multipart/form-data" method="post">
-<input type="hidden" name="update_time" value="update" />
+<input type="hidden" name="action" value="update" />
 <textarea rows="5" cols"50" name="changelog"></textarea>
 <input type="submit" value="INITIATE, I SAY!" />
 </form>
@@ -127,6 +129,7 @@ DECLARE AN UPDATE! CHANGELOG:<br/>
 DATA PURGE, BEEYOTCH!<br />
 <form enctype="multipart/form-data" method="post">
 Erase game
+<input type="hidden" name="action" value="erase" />
 <input type="checkbox" name="erase_game_safety" />Safety<br />
 <select name="erase_game" id="erase_game">
 <option selected="true">ALL GAME IN DATABASE</option>
@@ -141,6 +144,7 @@ Erase game
 
 Upload a save archive!!<br />
 <form enctype="multipart/form-data" method="post">
+<input type="hidden" name="action" value="upload" />
 <input type="file" name="archive_upload" /><br/>
 Description:
 <textarea rows="5" cols"50" name="archive_description"></textarea>
