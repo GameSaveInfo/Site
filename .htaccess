@@ -1,5 +1,4 @@
 RewriteEngine On
-RewriteBase /~masgau/gamesaveinfo/
 RewriteRule ^.*admin/.*$ - [L]
 RewriteRule ^.*api/.*$ - [L]
 RewriteRule ^.*css/.*$ - [L]
