@@ -5,16 +5,13 @@
     include_once $folder.'/../config.php';
 
     global $test_mode;
-    switch(substr($_SERVER["SERVER_NAME"],0,3)) {
-        case "192":
-        case "sag":
-        case "tes":
+    $url = $_SERVER["SERVER_NAME"];
+    if(strstr($url,"tardis")!= -1) {
             $test_mode = true;
-            break;
-        default:
+    } else {
             $test_mode = false;
-            break;
     }
+    
 
     global $gdb;
     $gdb = Databases::$gamesaveinfo;
