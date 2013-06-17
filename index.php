@@ -268,7 +268,7 @@ echo '</tr></table></div>';
     }
     echo '</ul></div>';
 if($current_game ==null) {
-    $news = $db->Select("anouncements",null,null,array("timestamp"));
+    $news = $db->Select("anouncements",null,null,array("timestamp"=>"desc"));
     foreach($news as $row) {
         echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
     }

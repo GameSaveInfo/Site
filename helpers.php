@@ -1,4 +1,17 @@
 <?php
+
+function remove($string,$remove) {
+    $str = trim(substr($string,0,strlen($string)-strlen($remove)),'\\');
+    
+    if($str=="")
+        return null;
+    
+    return $str;
+}
+function endsWith($haystack,$needle) {
+    $substr = substr($haystack,strlen($haystack)-strlen($needle),strlen($needle));
+    return $needle = $substr;
+}
 function ajdustLocation($location, $parent_location = null) {
     if(!is_null($parent_location)) {
         if(!is_null($parent_location->detract)) {
