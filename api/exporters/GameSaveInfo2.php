@@ -37,13 +37,17 @@ abstract class GameSaveInfo2 extends AXmlExporter {
 
         $gele->appendChild($this->createElement("title",$game->title));
         
-        
+        $i = 0;
         foreach($game->versions as $version) {
             $vele = $this->createGameVersionElement($version);
             if($vele!=null) {
                 $gele->appendChild($vele);
+                $i++;
             }
         }
+        if($i==0) 
+            return null;
+        
         
         if($game->comment!=null) {
             $gele->appendChild($this->createElement("comment",$game->comment));            
