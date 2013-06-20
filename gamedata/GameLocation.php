@@ -9,6 +9,7 @@ class GameLocation extends Location {
     public $media = null;
     public $region = null;
     public $release = null;
+    public $revision = 0;
     //public $episode = null;
         
     public $version;
@@ -58,6 +59,7 @@ class GameLocation extends Location {
                     "media"=>array("string","media",true),
                     "region"=>array("string","region",true),
                     "release"=>array("string","release",true),
+                    "revision"=>array("integer","revision",true),
                     //"episode"=>array("string","episode",true)
                     );   
     }

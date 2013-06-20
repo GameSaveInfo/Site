@@ -83,12 +83,13 @@ Import Limit: <input type="text" name="add_game_limit" value="500" /><br />
 <select name="file" id="file">
 <option>ALL XML FILES</option>
 <?php
-$files = array("system.xml","deprecated.xml",);
+$files = array("system.xml");
 $alphas = range('a', 'z');
 array_push($files, "numeric.xml");
 foreach($alphas as $alpha) {
     array_push($files, $alpha.".xml");
 }
+array_push($files, "deprecated.xml");
 $cur_file = null;
 if(isset($_POST['file'])) {
     $cur_file = $_POST['file'];
@@ -156,7 +157,7 @@ Description:
 </div>
 <?php
 
-    if(isset($_POST['update_time'])) {
+    if(isset($_POST['action'])&&$_POST['action']=="update") {
         $changelog = $_POST['changelog'];
         $db->Insert("update_history",array("changelog"=>$changelog),"UPDATEING UPDATE HISTROY!!!");
     }
@@ -164,7 +165,7 @@ Description:
     function loadfile($file, $open = true) {
         global $branch;
         $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
-                $schema_url = $base_url.'GameSaveInfo20.xsd';
+                $schema_url = $base_url.'GameSaveInfo202.xsd';
         echo "<details ";
         if($open)
             echo "open='true' ";
@@ -187,8 +188,7 @@ Description:
         echo '<table style="clear:both;"><tr><td style="clear:both;vertical-align:top;width:48%">';
         if($file=="ALL XML FILES") {
             foreach($files as $file) {
-                loadfile($file, false);
-                
+                loadfile($file, false);            
             }
         } else {
             loadfile($file);

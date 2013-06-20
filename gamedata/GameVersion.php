@@ -25,6 +25,9 @@ class GameVersion extends AXmlData {
     public $release = null;
     public $episode = null;
     public $type = null;
+    public $revision = 0;
+    
+    public $deprecated = 0;
     
     public $virtualstore = null;
     public $detect = null;
@@ -74,6 +77,8 @@ class GameVersion extends AXmlData {
             return false;
         if($this->release!=$other->release)
             return false;
+        if($this->revision!=$other->revision)
+            return false;
         
         return true;
     }
@@ -90,12 +95,19 @@ class GameVersion extends AXmlData {
         return self::$os_names[$name];
     }
         
-    public static $id_fields = array("name","os","platform","region","media","release", "type");
+    public static $id_fields = array("name","os","platform","media","region","release", "revision", "type");
 
     public function getFields() {
         $return_me = array();
         foreach(self::$id_fields as $field) {
-            $return_me[$field] = array("string",$field,true);
+            switch($field) {
+                case "revision":
+                    $return_me[$field] = array("integer",$field,true);
+                    break;
+                default:
+                    $return_me[$field] = array("string",$field,true);
+                    break;
+            }
         }
         //"episode"=> array("string","episode",true),
         $return_me["title"] = array("string","title",false);
@@ -103,6 +115,7 @@ class GameVersion extends AXmlData {
         $return_me["restore_comment"] = array("string","restore_comment",false);
         $return_me["virtualstore"] = array("string","virtualstore",false);
         $return_me["detect"] = array("string","detect",false);
+        $return_me["deprecated"] = array("boolean","deprecated",false);
         return $return_me;
     }
     

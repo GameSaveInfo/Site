@@ -156,8 +156,13 @@ class Games {
                 $game = new Game();
                 $game->loadXml($node);
                 $name = $game->name;
-                if(array_key_exists($name,self::$games))
-                    throw new Exception("DUPLICATE GAME NAME ".$name);
+                if(array_key_exists($name,self::$games)) {
+                    foreach(self::$games[$name]->versions as $version) {
+                        array_push($game->versions,$version);
+                    }
+                    //                    throw new Exception("DUPLICATE GAME NAME ".$name);
+
+                }
                 self::$games[$name] = $game;
 		} else if($node->localName == '') {
 		continue;

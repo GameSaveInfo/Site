@@ -23,6 +23,10 @@ class MASGAU11 extends AXmlExporter {
         $geles = array();
         
         foreach($game->versions as $version) {
+            if($version->revision!=null&&$version->revision!="0") {
+                continue;
+            }
+            
             $gele = $this->createGameVersionElement($game, $version);
             if(is_null($gele))
                 continue;
@@ -199,7 +203,7 @@ class MASGAU11 extends AXmlExporter {
         }
 
         if(get_class($location)!="GameLocation")
-                $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for","os"));
+                $this->processFields($location,$new_lele,array("game_version","ev","deprecated","path","only_for","os","revision"));
 
         if(!is_null($location->only_for)) {
             $pv = null;
@@ -228,6 +232,9 @@ class MASGAU11 extends AXmlExporter {
         if(sizeof($locations)>0) {
             $leles = array();
             foreach($locations as $location) {
+                if(get_class($location)=="GameLocation"&&$location->revision!=null&&$location->revision!="0") {
+                    continue;
+                }
                 $leles = $this->createLocationElement($leles,$location);
             }
             return $leles;

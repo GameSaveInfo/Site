@@ -82,36 +82,36 @@ class APIController {
         echo "</ul>";
 
         echo "To access all the data in a particular format, just append the name of the exporter to the url, like this:<br/>";
-        linkHere("GameSaveInfo20/");
+        linkHere("GameSaveInfo202/");
         echo "<br/>";
         
         echo "Odds are though that you probably don't want all the data at once.<br/>";
 
         echo "If you just want a specific game, you can just name it:<br/>";
-        linkHere("GameSaveInfo20/DeusEx/");
+        linkHere("GameSaveInfo202/DeusEx/");
         echo "<br/>";
         echo "To filter the output, you can add criteria to the end of the url. For instance, to filter to only expansions:<br/>";
-        linkHere("GameSaveInfo20/expansion/");
+        linkHere("GameSaveInfo202/expansion/");
         echo "<br/>";
         echo "Or to filter to only PS3 games:<br/>";
-        linkHere("GameSaveInfo20/PS3/");
+        linkHere("GameSaveInfo202/PS3/");
         echo "<br/>";
         echo "You can filter by game names with wildcards too. Actually it's just the asterisk, but it works:<br/>";
-        linkHere("GameSaveInfo20/D*/");
+        linkHere("GameSaveInfo202/D*/");
         echo "<br/>";
         echo "You can also output only games updated since a certain date (this works with almost any PHP parseable date string):<br/>";
-        linkHere("GameSaveInfo20/2012-01-01/");
+        linkHere("GameSaveInfo202/2012-01-01/");
         echo "<br/>";
         echo "You can combine criteria by adding more to the end of the URL, for instance this gets all the PS1 games in the USA region:<br/>";
-        linkHere("GameSaveInfo20/PS1/USA/");
+        linkHere("GameSaveInfo202/PS1/USA/");
         echo "<br/>";
         echo "You can specify an excluding criteria by placing an exclamation mark before the criteria. This will output only the games that are NOT for Windows:<br/>";
-        linkHere("GameSaveInfo20/!Windows/");
+        linkHere("GameSaveInfo202/!Windows/");
         echo "<br/>";
         echo "There are 6 different kind of criteria: game name,  game type, os, platform, media and region.<br/>";
         echo "If you use multiple criteria in the same category, they are treated in an OR fashion (for the SQL-savy, it's using a WHERE IN). <br/>";
         echo "This example gets all the game that are PS1 or PS2 or PS3:<br/>";
-        linkHere("GameSaveInfo20/PS1/PS2/PS3/");
+        linkHere("GameSaveInfo202/PS1/PS2/PS3/");
         echo "<br/>";
         echo "<table border=1>";
         echo "<tr><th colspan='5'>Here's a table of the criteria categories, and the usable values</th></tr>";
@@ -137,7 +137,7 @@ class APIController {
         echo "</table>";
         echo "<br/>";
         echo "There is also deprecated data in the database, it's filtered out of the API output by default, but if you really want it just add \"deprecated\" to the URL<br/>";
-        linkHere("GameSaveInfo20/deprecated/");
+        linkHere("GameSaveInfo202/deprecated/");
         echo "<br/>";
         
         echo "Here's the top ten queries against the database!";
@@ -176,15 +176,11 @@ class APIController {
     
     protected function export($exporter, $criteria = null,$comment = null, $date = null) {
         // If we're on the test server, then caching is disabling
-        switch(substr($_SERVER["SERVER_NAME"],0,3)) {
-            case "192":
-            case "sag":
-            case "tes":
-                $nocache = true;
-                break;
-            default:
-                $nocache = false;
-                break;
+        $url = $_SERVER["SERVER_NAME"];
+        if(strstr($url,"tardis")!= -1) {
+            $nocache = true;
+        } else {
+            $nocache = false;
         }
         // Programmatic override for cache dissabling!
         //$nocache = false;
@@ -218,7 +214,7 @@ class APIController {
             require_once $folder.'/../gamedata/GameVersion.php';
             
             $game_criteria = array("deprecated"=>0);
-            $version_criteria = array();
+            $version_criteria = array("deprecated"=>0);
             
             
             function addCriteria($array,$key,$value, $not = false) {
@@ -266,10 +262,11 @@ class APIController {
                         
                         
                         if($arg=="deprecated") {
-                            $game_criteria['deprecated'] = 1;
+                            //$game_criteria['deprecated'] = 1;
+                            unset($game_criteria['deprecated']);
+                            $version_criteria['deprecated'] = 1;
                         } else if(in_array($arg,Game::$types)) {
                             $game_criteria = addCriteria($game_criteria,'type',$arg,$not);
-                            
                         } else if(in_array($arg,$this->oss)) {
                             $version_criteria = addCriteria($version_criteria,'os',$arg,$not);
                             
