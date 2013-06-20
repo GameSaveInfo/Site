@@ -6,7 +6,7 @@
 
     global $test_mode;
     $url = $_SERVER["SERVER_NAME"];
-    if(strstr($url,"tardis")!= -1) {
+    if(strstr($url,"tardis")) {
             $test_mode = true;
     } else {
             $test_mode = false;
