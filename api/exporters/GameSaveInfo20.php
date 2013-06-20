@@ -1,6 +1,6 @@
 <?php
-require_once 'AGameSaveInfo2.php';
-class GameSaveInfo20 extends AGameSaveInfo2 {
+require_once 'GameSaveInfo2.php';
+class GameSaveInfo20 extends GameSaveInfo2 {
     public function __construct($comment = null, $time = null) {
         parent::__construct(2,0,null,$comment,$time);
     }

@@ -49,6 +49,9 @@ function loadLocations($game_data, $db, $parent_location = null) {
     global $game_locations;
     $locations_found = false;
     foreach ($game_data->versions as $version) {
+        if($version->deprecated=="1") {
+            continue;
+        }
         if(!is_null($parent_location)) {
             if(!$version->versionMatch($parent_location))
             continue;

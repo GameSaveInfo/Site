@@ -214,7 +214,7 @@ class APIController {
             require_once $folder.'/../gamedata/GameVersion.php';
             
             $game_criteria = array("deprecated"=>0);
-            $version_criteria = array("deprecated"=>0);
+            $version_criteria = array();
             
             
             function addCriteria($array,$key,$value, $not = false) {
@@ -263,7 +263,6 @@ class APIController {
                         
                         if($arg=="deprecated") {
                             //$game_criteria['deprecated'] = 1;
-                            unset($game_criteria['deprecated']);
                             $version_criteria['deprecated'] = 1;
                         } else if(in_array($arg,Game::$types)) {
                             $game_criteria = addCriteria($game_criteria,'type',$arg,$not);

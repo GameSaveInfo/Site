@@ -9,7 +9,7 @@ class GameLocation extends Location {
     public $media = null;
     public $region = null;
     public $release = null;
-    public $revision = 0;
+    public $revision = null;
     //public $episode = null;
         
     public $version;

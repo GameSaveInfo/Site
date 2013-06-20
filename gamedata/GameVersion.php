@@ -25,7 +25,7 @@ class GameVersion extends AXmlData {
     public $release = null;
     public $episode = null;
     public $type = null;
-    public $revision = 0;
+    public $revision = null;
     
     public $deprecated = 0;
     

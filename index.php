@@ -71,6 +71,9 @@
     // In this area we're only loading the data
 
     foreach ($game_data->versions as $version) {
+        if($version->deprecated=="1") {
+            continue;
+        }
         foreach($version->file_types as $file) {
             if(!array_key_exists($file->name,$file_types)) {
                 $file_types[$file->name] = $file->inclusions;   
@@ -308,7 +311,7 @@ if($current_game!=null) {
         //echo " (".ucfirst($game_data->type).")";
     //}
     if ($game_data->deprecated) {
-        echo '<h4>NOTE: This game version has been marked as deprecated</h4>';
+        echo '<h4>NOTE: This game has been marked as deprecated</h4>';
     }
 }
  ?>
