@@ -1,3 +1,12 @@
 [submodule "libs"]
 	path = libs
 	url = ../../sanmadjack/SiteLibs.git
+[submodule "libs/smj"]
+	path = libs/smj
+	url = ../../sanmadjack/SiteLibs.git
+[submodule "libs/gsi"]
+	path = libs/gsi
+	url = ../Lib.PHP.git
+[submodule "libs/geshi"]
+	path = libs/geshi
+	url = ../../GeSHi/geshi-1.0.git

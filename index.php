@@ -1,8 +1,8 @@
 <?php
     require_once 'headers.php';
     require_once 'helpers.php';
-    require_once 'gamedata/Game.php';
-    require_once "gamedata/Games.php";
+    require_once 'libs/gsi/Game.php';
+    require_once "libs/gsi/Games.php";
 
     if(array_key_exists('game',$_GET)) {
         $current_game = $_GET['game'];
@@ -120,15 +120,15 @@ if (isset($game_data)) {
 <link media="Screen" href="/css/ogsip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/ui-darkness/jquery-ui-1.9.0.custom.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/gsi.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="/libs/tooltip.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="/libs/popups.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/libs/smj/tooltip.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/libs/smj/popups.css" type="text/css" rel="stylesheet" />
 
 
-<script type="text/javascript" src="/libs/jquery/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="/libs/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
 <script type="text/javascript" src="/js/gsi.js"></script>
-<script type="text/javascript" src="/libs/tooltip.js"></script>
-<script type="text/javascript" src="/libs/popups.js"></script>
+<script type="text/javascript" src="/libs/smj/tooltip.js"></script>
+<script type="text/javascript" src="/libs/smj/popups.js"></script>
 <script type="text/javascript">
 var availableGames = [
 <?php
@@ -203,7 +203,6 @@ There are currently
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
 <a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
-<a href="http://forums.gamesave.info">Forums</a>
 </div>
 
 <div class="ads">

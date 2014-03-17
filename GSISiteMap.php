@@ -1,5 +1,5 @@
 <?php
-require_once 'libs/ASiteMap.php';
+require_once 'libs/smj/ASiteMap.php';
 require_once 'headers.php';
 class GSISiteMap extends ASiteMap {
     public function __construct() {
