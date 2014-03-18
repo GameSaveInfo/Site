@@ -1,8 +1,8 @@
 <?php
     require_once 'headers.php';
     require_once 'helpers.php';
-    require_once 'gamedata/Game.php';
-    require_once "gamedata/Games.php";
+    require_once 'libs/gsi/data/Game.php';
+    require_once "libs/gsi/data/Games.php";
 
     if(array_key_exists('game',$_GET)) {
         $current_game = $_GET['game'];
@@ -106,9 +106,11 @@
 ?><!DOCTYPE HTML>
 <html>
 <head>
-<title>GameSave.Info - 
+<title>GameSave.Info
 <?php
-    echo $game_data->title;
+if (isset($game_data)) {
+    echo " - ".$game_data->getExtendedTitle();
+}
 ?>
 </title>
 
@@ -118,25 +120,25 @@
 <link media="Screen" href="/css/ogsip.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/ui-darkness/jquery-ui-1.9.0.custom.css" type="text/css" rel="stylesheet" />
 <link media="Screen" href="/css/gsi.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="/libs/tooltip.css" type="text/css" rel="stylesheet" />
-<link media="Screen" href="/libs/popups.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/libs/smj/tooltip.css" type="text/css" rel="stylesheet" />
+<link media="Screen" href="/libs/smj/popups.css" type="text/css" rel="stylesheet" />
 
 
-<script type="text/javascript" src="/libs/jquery/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="/libs/jquery/jquery-ui-1.9.0.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.10.4.custom.min.js"></script>
 <script type="text/javascript" src="/js/gsi.js"></script>
-<script type="text/javascript" src="/libs/tooltip.js"></script>
-<script type="text/javascript" src="/libs/popups.js"></script>
+<script type="text/javascript" src="/libs/smj/tooltip.js"></script>
+<script type="text/javascript" src="/libs/smj/popups.js"></script>
 <script type="text/javascript">
 var availableGames = [
 <?php
-$data = $db->Select("games",array("name","title"),null,array("name"));
+$data = $db->Select("games",null,null,array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
+    echo '{ label: "'.Game::getExtendedTitleFor($row).'", value: "'.$row->name.'" },'."\n";
 }
-$data = $db->Select("game_versions",array("name","title"),"title IS NOT NULL",array("name"));
+$data = $db->Select("game_versions",null,"title IS NOT NULL",array("name"));
  foreach($data as $row) {
-    echo '{ label: "'.$row->title.'", value: "'.$row->name.'" },'."\n";
+    echo '{ label: "'.Game::getExtendedTitleFor($row).'", value: "'.$row->name.'" },'."\n";
 }
 ?>
 ];
@@ -200,8 +202,7 @@ There are currently
 <a href="https://github.com/GameSaveInfo/Data">XML Data Files on GitHub</a> - 
 <a href="https://github.com/GameSaveInfo/Data/blob/master/changelog.txt">Changelog</a> - 
 <a href="https://github.com/GameSaveInfo/Reports">Game Reports</a> -
-<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a> - 
-<a href="http://forums.gamesave.info">Forums</a>
+<a href="https://github.com/GameSaveInfo/Site/issues/new">Report A Problem With The Site!</a>
 </div>
 
 <div class="ads">
@@ -239,7 +240,7 @@ if($width>0) {
 }    
 echo '</tr></table></div>';
     $last_letter = null;
-    $data = $db->Select("games",array("name","title"),null,array("name"));
+    $data = $db->Select("games",null,"type != 'system'",array("name"));
     $first = true;
     foreach($data as $row) {
             
@@ -262,11 +263,11 @@ echo '</tr></table></div>';
             $last_letter = strtoupper($letter);
         }
          
-         echo '<li><a href="\\'.$row->name.'\\">'.$row->title.'</a></li>';
+         echo '<li><a href="/'.$row->name.'/">'.Game::getExtendedTitleFor($row).'</a></li>';
     }
     echo '</ul></div>';
 if($current_game ==null) {
-    $news = $db->Select("anouncements",null,null,array("timestamp"));
+    $news = $db->Select("anouncements",null,null,array("timestamp"=>"desc"));
     foreach($news as $row) {
         echo '<div class="anouncement"><b>'.$row->timestamp.' '.$row->subject.':</b> '.$row->body.'</div>';
     }
@@ -301,10 +302,10 @@ Contribute XML to the <a href="https://github.com/GameSaveInfo/Data">GitHub repo
 <div class="game_title">
 <?php
 if($current_game!=null) {
-    echo $game_data->title;
-    if(strtolower($game_data->type)!="game") {
-        echo " (".ucfirst($game_data->type).")";
-    }
+    echo $game_data->getExtendedTitle();
+//    if(strtolower($game_data->type)!="game") {
+        //echo " (".ucfirst($game_data->type).")";
+    //}
     if ($game_data->deprecated) {
         echo '<h4>NOTE: This game version has been marked as deprecated</h4>';
     }
@@ -615,19 +616,6 @@ echo '</div>';
 
 
 
-</div>
-<div class="games_drawer">
-<div class="games">
-<?php
-    foreach($games as $game) {
-        $letter = substr($game->name,0,1);
-        echo '<a href="index.php?letter='.$letter.'&game='.$game->name.'" class="game">'.$game->title.'</a><br/>';
-    }
-?>
-</div>
-<div class="games_expander">
->
-</div>
 </div>
 
 

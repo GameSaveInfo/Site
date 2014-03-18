@@ -1,7 +1,7 @@
 <?php
 include_once "../headers.php";
 
-include_once "APIController.php";
+include_once "../libs/gsi/api/APIController.php";
 
 $export = new APIController($db);
 

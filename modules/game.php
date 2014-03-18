@@ -35,18 +35,7 @@ function printFile($file) {
 
 
 
-function endsWith($haystack,$needle) {
-    $substr = substr($haystack,strlen($haystack)-strlen($needle),strlen($needle));
-    return $needle = $substr;
-}
-function remove($string,$remove) {
-    $str = trim(substr($string,0,strlen($string)-strlen($remove)),'\\');
-    
-    if($str=="")
-        return null;
-    
-    return $str;
-}
+
 
 
 

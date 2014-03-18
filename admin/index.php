@@ -1,29 +1,54 @@
 <?php
-
+global $output;
+    $output = '';
     include_once '../headers.php';
     if(!class_exists("Database")) {
         include_once '../libs/Database.php';
-   }
-   
-
-    if(isset($_POST['erase_game_safety'])) {
-        
-        if($_POST['erase_game']=="ALL GAME IN DATABASE") {
-//            $result = AXmlData::SelectRow('games',"name",array("for"=>null,"follows"=>null),null,$con);
-            
-  //          while ($row = mysql_fetch_assoc($result)) {
-                $db->Delete('games',null,"Deleting ALL From Database");
-    //        }
-        } else {
-            $game = $_POST['erase_game'];
-            $db->Delete('games',array("name"=>$game),"Deleting ".$game." From Database");
-//            if(array_key_exists($game,$_POST)&&$_POST[$game]=="ALL") {
-  //              $db->Delete('games',array('name'=>$_POST['erase_game']),"Deleting Game ".$_POST['erase_game']." From the Database");
-    //        } else {
-      //          $db->Delete('game_versions',array('id'=>$_POST[$game]),"Deleting Game ".$_POST['erase_game']."'s version ID ".$_POST[$game]." From the Database");
-        //    }
+    }
+    
+    function createDatabase($db,$name) {
+        global $output;
+        $output .= "Dropping $name table\n";
+        @$db->RunStatement("DROP TABLE IF EXISTS $name");
+        $output .= "Creating $name table\n";
+        if(is_file("sql/".$name.".sql")) {
+            $db->runFile("sql/".$name.".sql");
         }
     }
+   
+    function createDatabases($db) {
+        global $output;
+        
+        createDatabase($db,"games");
+        
+        createDatabase($db,"ev_paths");
+
+    }
+
+    if(isset($_POST['action'])) {
+        $action = $_POST['action'];
+        $output .= 'Requested action is '.$action."\n";
+        
+        switch($action) {
+            case 'erase':
+                if(isset($_POST['erase_game_safety'])) {
+                    if($_POST['erase_game']=="ALL GAME IN DATABASE") {
+                        $db->Delete('games',null,"Deleting ALL From Database");
+                    } else {
+                        $game = $_POST['erase_game'];
+                        $db->Delete('games',array("name"=>$game),"Deleting ".$game." From Database");
+                    }
+                } else {
+                    $output .= ' Erase safety not set.';
+                }
+                break;
+            case "setup":
+                createDatabases($db);
+                break;
+        }
+    } 
+    
+    
 ?>
 <style>
 details details {
@@ -53,7 +78,7 @@ $(document).ready(function() {
 
 
 <?php
-
+    
         global $test_mode;
         global $branch;
         if($test_mode)
@@ -64,7 +89,7 @@ $(document).ready(function() {
     echo 'XML File Import From '.$branch.' Branch Of GitHub';
 ?>
 <form enctype="multipart/form-data" method="post">
-<input type="hidden" name="action" value="upload" />
+<input type="hidden" name="action" value="import" />
 <input type="hidden" name="overwrite_existing" value="false" />
 <!--<input name='overwrite' type='checkbox' />Overwrite Existing-->
 <?php
@@ -82,12 +107,13 @@ Import Limit: <input type="text" name="add_game_limit" value="500" /><br />
 <select name="file" id="file">
 <option>ALL XML FILES</option>
 <?php
-$files = array("system.xml","deprecated.xml",);
+$files = array("system.xml");
 $alphas = range('a', 'z');
 array_push($files, "numeric.xml");
 foreach($alphas as $alpha) {
     array_push($files, $alpha.".xml");
 }
+array_push($files, "deprecated.xml");
 $cur_file = null;
 if(isset($_POST['file'])) {
     $cur_file = $_POST['file'];
@@ -108,6 +134,7 @@ foreach($files as $file) {
 <input type="submit" value="IMPORT IT!" />
 </form>
 <form enctype="multipart/form-data" method="post">
+<input type="hidden" name="action" value="import_new" />
 <input type="hidden" name="add_game_limit" value="20000" />
 <input type="hidden" name="action" value="upload" />
 <input type="hidden" name="overwrite_existing" value="true" />
@@ -117,30 +144,43 @@ foreach($files as $file) {
 
 DECLARE AN UPDATE! CHANGELOG:<br/>
 <form enctype="multipart/form-data" method="post">
-<input type="hidden" name="update_time" value="update" />
+<input type="hidden" name="action" value="update" />
 <textarea rows="5" cols"50" name="changelog"></textarea>
 <input type="submit" value="INITIATE, I SAY!" />
 </form>
 </div>
 
 <div style="width:50%;float:left;">
+<!--
+<form enctype="multipart/form-data" method="post">
+Set up tables
+<input type="hidden" name="action" value="setup" />
+<input type="submit" /></form><br/>
+-->
+
 DATA PURGE, BEEYOTCH!<br />
 <form enctype="multipart/form-data" method="post">
 Erase game
+<input type="hidden" name="action" value="erase" />
 <input type="checkbox" name="erase_game_safety" />Safety<br />
 <select name="erase_game" id="erase_game">
 <option selected="true">ALL GAME IN DATABASE</option>
 <?php 
+try {
     $data = $db->Select("games",null,null,array("name"));
     foreach ($data as $row) {
         echo '<option value="'.$row->name.'">' . $row->name . '</option>';
     }
+} catch(Exception $e) {
+    $output .= $e->getMessage()."\n";
+}
 ?>
 </select><br />
 <input type="submit" /></form><br/>
 
 Upload a save archive!!<br />
 <form enctype="multipart/form-data" method="post">
+<input type="hidden" name="action" value="upload" />
 <input type="file" name="archive_upload" /><br/>
 Description:
 <textarea rows="5" cols"50" name="archive_description"></textarea>
@@ -150,9 +190,13 @@ Description:
 
 
 </div>
+<div style="white-space:pre;clear:both;">
+<?php echo $output; ?>
+</div>
+
 <?php
 
-    if(isset($_POST['update_time'])) {
+    if(isset($_POST['action'])&&$_POST['action']=="update") {
         $changelog = $_POST['changelog'];
         $db->Insert("update_history",array("changelog"=>$changelog),"UPDATEING UPDATE HISTROY!!!");
     }
@@ -160,7 +204,7 @@ Description:
     function loadfile($file, $open = true) {
         global $branch;
         $base_url = "https://raw.github.com/GameSaveInfo/Data/".$branch;
-                $schema_url = $base_url.'GameSaveInfo20.xsd';
+                $schema_url = $base_url.'GameSaveInfo202.xsd';
         echo "<details ";
         if($open)
             echo "open='true' ";
@@ -168,7 +212,7 @@ Description:
         echo "style='clear:both;'><summary>".$file."</summary>";
         $url = $base_url.$file;
         
-        require_once('../gamedata/Games.php');
+        require_once('../libs/gsi/data/Games.php');
         Games::loadFromXml($url,$schema_url);
         echo "</details>";
 
@@ -183,8 +227,7 @@ Description:
         echo '<table style="clear:both;"><tr><td style="clear:both;vertical-align:top;width:48%">';
         if($file=="ALL XML FILES") {
             foreach($files as $file) {
-                loadfile($file, false);
-                
+                loadfile($file, false);            
             }
         } else {
             loadfile($file);

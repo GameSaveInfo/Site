@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /api/
+Disallow: /libs/
+Disallow: /modules/
+Disallow: /admin/
+Disallow: /archives/
+Disallow: /gamedata/
+Sitemap: http://gamesave.info/sitemap.php
+

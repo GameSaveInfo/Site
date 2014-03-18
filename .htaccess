@@ -1,5 +1,4 @@
 RewriteEngine On
-RewriteBase /~masgau/gamesaveinfo/
 RewriteRule ^.*admin/.*$ - [L]
 RewriteRule ^.*api/.*$ - [L]
 RewriteRule ^.*css/.*$ - [L]
@@ -8,4 +7,4 @@ RewriteRule ^.*js/.*$ - [L]
 RewriteRule ^.*libs/.*$ - [L]
 RewriteRule ^.+.php$ - [L]
 RewriteRule ^([^/]+)/$ index.php?game=$1 [L]
-RewriteRule ^([^/]+)$ /$1/ [R]
+RewriteRule ^([^/]+)$ /$1/ [R,L]

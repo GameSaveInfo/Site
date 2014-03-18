@@ -1,3 +1,6 @@
+* Fixed kitten alignment
+* Added indicators of what game a mod is for
+* Removed the trailing dash from the page title on the front page
 2/3
 * Added RSS feed for site updates
 * Added sitemap for search enginge crawlers
