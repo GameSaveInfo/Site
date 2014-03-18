@@ -1,14 +1,33 @@
 <?php
+global $output;
     $output = '';
     include_once '../headers.php';
     if(!class_exists("Database")) {
         include_once '../libs/Database.php';
     }
+    
+    function createDatabase($db,$name) {
+        global $output;
+        $output .= "Dropping $name table\n";
+        @$db->RunStatement("DROP TABLE IF EXISTS $name");
+        $output .= "Creating $name table\n";
+        if(is_file("sql/".$name.".sql")) {
+            $db->runFile("sql/".$name.".sql");
+        }
+    }
    
+    function createDatabases($db) {
+        global $output;
+        
+        createDatabase($db,"games");
+        
+        createDatabase($db,"ev_paths");
+
+    }
 
     if(isset($_POST['action'])) {
         $action = $_POST['action'];
-        $output .= ' Requested action is '.$action;
+        $output .= 'Requested action is '.$action."\n";
         
         switch($action) {
             case 'erase':
@@ -23,8 +42,13 @@
                     $output .= ' Erase safety not set.';
                 }
                 break;
+            case "setup":
+                createDatabases($db);
+                break;
         }
     } 
+    
+    
 ?>
 <style>
 details details {
@@ -54,7 +78,7 @@ $(document).ready(function() {
 
 
 <?php
-
+    
         global $test_mode;
         global $branch;
         if($test_mode)
@@ -127,6 +151,13 @@ DECLARE AN UPDATE! CHANGELOG:<br/>
 </div>
 
 <div style="width:50%;float:left;">
+<!--
+<form enctype="multipart/form-data" method="post">
+Set up tables
+<input type="hidden" name="action" value="setup" />
+<input type="submit" /></form><br/>
+-->
+
 DATA PURGE, BEEYOTCH!<br />
 <form enctype="multipart/form-data" method="post">
 Erase game
@@ -135,10 +166,14 @@ Erase game
 <select name="erase_game" id="erase_game">
 <option selected="true">ALL GAME IN DATABASE</option>
 <?php 
+try {
     $data = $db->Select("games",null,null,array("name"));
     foreach ($data as $row) {
         echo '<option value="'.$row->name.'">' . $row->name . '</option>';
     }
+} catch(Exception $e) {
+    $output .= $e->getMessage()."\n";
+}
 ?>
 </select><br />
 <input type="submit" /></form><br/>
@@ -155,6 +190,10 @@ Description:
 
 
 </div>
+<div style="white-space:pre;clear:both;">
+<?php echo $output; ?>
+</div>
+
 <?php
 
     if(isset($_POST['action'])&&$_POST['action']=="update") {
@@ -173,7 +212,7 @@ Description:
         echo "style='clear:both;'><summary>".$file."</summary>";
         $url = $base_url.$file;
         
-        require_once('../gamedata/Games.php');
+        require_once('../libs/gsi/data/Games.php');
         Games::loadFromXml($url,$schema_url);
         echo "</details>";
 

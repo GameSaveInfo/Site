@@ -20,7 +20,7 @@
     global $test_mode;
     
     $url = $_SERVER["SERVER_NAME"];
-    if(strstr($url,"tardis")) {
+    if(strstr($url,"darkho")) {
             $test_mode = true;
     } else {
             $test_mode = false;
