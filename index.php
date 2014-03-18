@@ -1,8 +1,8 @@
 <?php
     require_once 'headers.php';
     require_once 'helpers.php';
-    require_once 'libs/gsi/Game.php';
-    require_once "libs/gsi/Games.php";
+    require_once 'libs/gsi/data/Game.php';
+    require_once "libs/gsi/data/Games.php";
 
     if(array_key_exists('game',$_GET)) {
         $current_game = $_GET['game'];

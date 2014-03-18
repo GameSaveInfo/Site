@@ -1,5 +1,5 @@
 <?php
-require_once 'libs/ARSSFeed.php';
+require_once 'libs/smj/ARSSFeed.php';
 require_once 'headers.php';
 class GSIRSSFeed extends ARSSFeed {
     private static $url = "http://gamesave.info/";
