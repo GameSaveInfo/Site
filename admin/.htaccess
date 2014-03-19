@@ -1,4 +1,4 @@
 AuthType Basic
-AuthName "MASGAU Admin"
-AuthUserFile /home/masgau/.htpasswd
+AuthName "GameSave.Info Admin"
+AuthUserFile ../../.htpasswd
 Require valid-user
